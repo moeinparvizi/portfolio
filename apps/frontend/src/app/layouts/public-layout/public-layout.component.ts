@@ -18,6 +18,7 @@ import { LanguageSwitcherComponent } from '../../shared/components/language-swit
           <a routerLink="skills" routerLinkActive="active">Skills</a>
           <a routerLink="projects" routerLinkActive="active">Projects</a>
           <a routerLink="experience" routerLinkActive="active">Experience</a>
+          <a routerLink="education" routerLinkActive="active">Education</a>
           <a routerLink="contact" routerLinkActive="active">Contact</a>
         </nav>
 
