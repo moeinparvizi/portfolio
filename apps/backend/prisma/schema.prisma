@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ──────────────────────────────────────────────
+
+enum ProjectStatus {
+  draft
+  published
+}
+
+// ─── Models ─────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Profile {
+  id           String   @id @default(uuid())
+  fullName     Json     // { fa, en, de }
+  jobTitle     Json     // { fa, en, de }
+  summary      Json     // { fa, en, de }
+  avatarUrl    String?
+  logoUrl      String?
+  heroText     Json     // { fa, en, de }
+  heroCtaLabel Json     // { fa, en, de }
+  heroCtaLink  String?
+  socialLinks  Json     // { github?, linkedin?, twitter?, website? }
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Skill {
+  id        String   @id @default(uuid())
+  name      Json     // { fa, en, de }
+  category  String?
+  level     Int?     // 1-5
+  icon      String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id              String        @id @default(uuid())
+  title           Json          // { fa, en, de }
+  description     Json          // { fa, en, de }
+  summary         Json          // { fa, en, de } short for cards
+  images          Json          // string[]
+  tags            String[]      // tech tags, not translatable
+  category        String?
+  liveUrl         String?
+  githubUrl       String?
+  status          ProjectStatus @default(draft)
+  includeInResume Boolean       @default(false)
+  sortOrder       Int           @default(0)
+  featured        Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Experience {
+  id              String    @id @default(uuid())
+  company         Json      // { fa, en, de }
+  position        Json      // { fa, en, de }
+  description     Json      // { fa, en, de }
+  startDate       DateTime
+  endDate         DateTime?
+  isCurrent       Boolean   @default(false)
+  location        String?
+  includeInResume Boolean   @default(false)
+  sortOrder       Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Education {
+  id              String   @id @default(uuid())
+  institution     Json     // { fa, en, de }
+  degree          Json     // { fa, en, de }
+  fieldOfStudy    Json     // { fa, en, de }
+  description     Json     // { fa, en, de }
+  startDate       DateTime
+  endDate         DateTime?
+  includeInResume Boolean  @default(false)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(uuid())
+  name      String
+  role      Json?    // { fa, en, de }
+  company   String?
+  content   Json     // { fa, en, de }
+  avatarUrl String?
+  rating    Int?     // 1-5
+  approved  Boolean  @default(false)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  read      Boolean  @default(false)
+  replied   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model SiteSettings {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

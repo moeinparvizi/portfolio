@@ -1,0 +1,114 @@
+// ─── Liquid Glass Component ────────────────────────────
+// Apple-inspired glass morphism for web
+
+@mixin glass-base {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  position: relative;
+  overflow: hidden;
+
+  // Light refraction highlight
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--glass-highlight);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  // Ensure content stays above highlight
+  > * {
+    position: relative;
+    z-index: 2;
+  }
+}
+
+@mixin glass-card {
+  @include glass-base;
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+}
+
+@mixin glass-nav {
+  @include glass-base;
+  border-radius: var(--radius-lg);
+  padding: var(--space-sm) var(--space-lg);
+}
+
+@mixin glass-modal {
+  @include glass-base;
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  max-width: 480px;
+  width: 90%;
+}
+
+@mixin glass-button {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-lg);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  font-family: var(--font-body);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// ─── Accessibility ─────────────────────────────────────
+
+@media (prefers-reduced-motion: reduce) {
+  .glass,
+  .glass-card,
+  .glass-nav,
+  .glass-modal {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+
+    &::before {
+      display: none;
+    }
+  }
+}
+
+@media (prefers-contrast: more) {
+  .glass,
+  .glass-card,
+  .glass-nav,
+  .glass-modal {
+    border: 2px solid var(--color-text);
+    background: var(--color-surface);
+    box-shadow: none;
+
+    &::before {
+      display: none;
+    }
+  }
+}
+
+// ─── Performance ───────────────────────────────────────
+// Limit glass layers: max 3-4 per viewport
+// Use this class to disable glass on nested elements
+.glass-disabled {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: var(--color-surface) !important;
+
+  &::before {
+    display: none !important;
+  }
+}

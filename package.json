@@ -1,0 +1,14 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --parallel -r run dev",
+    "build": "pnpm --parallel -r run build",
+    "lint": "pnpm --parallel -r run lint",
+    "test": "pnpm --parallel -r run test",
+    "db:migrate": "pnpm --filter backend run db:migrate",
+    "db:seed": "pnpm --filter backend run db:seed",
+    "db:studio": "pnpm --filter backend run db:studio"
+  }
+}

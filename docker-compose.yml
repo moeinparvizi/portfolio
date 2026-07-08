@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: portfolio
+      POSTGRES_USER: portfolio
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-portfolio}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U portfolio"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://portfolio:${DB_PASSWORD:-portfolio}@db:5432/portfolio
+      JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-dev-refresh-secret}
+      JWT_EXPIRATION: "15m"
+      REFRESH_EXPIRATION: "7d"
+      PORT: "3000"
+      CORS_ORIGINS: http://localhost:4200
+      UPLOAD_DIR: /app/uploads
+    ports:
+      - "3000:3000"
+    volumes:
+      - uploads:/app/uploads
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+
+volumes:
+  pgdata:
+  uploads:

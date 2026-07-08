@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- English Pages -->
+  <url>
+    <loc>https://yourdomain.com/en</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://yourdomain.com/en"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://yourdomain.com/fa"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://yourdomain.com/de"/>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://yourdomain.com/en/about</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://yourdomain.com/en/about"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://yourdomain.com/fa/about"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://yourdomain.com/de/about"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://yourdomain.com/en/skills</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://yourdomain.com/en/skills"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://yourdomain.com/fa/skills"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://yourdomain.com/de/skills"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://yourdomain.com/en/projects</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://yourdomain.com/en/projects"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://yourdomain.com/fa/projects"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://yourdomain.com/de/projects"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://yourdomain.com/en/experience</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://yourdomain.com/en/experience"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://yourdomain.com/fa/experience"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://yourdomain.com/de/experience"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://yourdomain.com/en/education</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://yourdomain.com/en/education"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://yourdomain.com/fa/education"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://yourdomain.com/de/education"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://yourdomain.com/en/testimonials</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://yourdomain.com/en/testimonials"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://yourdomain.com/fa/testimonials"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://yourdomain.com/de/testimonials"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://yourdomain.com/en/contact</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://yourdomain.com/en/contact"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://yourdomain.com/fa/contact"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://yourdomain.com/de/contact"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://yourdomain.com/en/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://yourdomain.com/en/privacy"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://yourdomain.com/fa/privacy"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://yourdomain.com/de/privacy"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>
