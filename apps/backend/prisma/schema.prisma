@@ -55,7 +55,7 @@ model Project {
   title           Json          // { fa, en, de }
   description     Json          // { fa, en, de }
   summary         Json          // { fa, en, de } short for cards
-  images          Json          // string[]
+  images          Json          @default("[]") // string[]
   tags            String[]      // tech tags, not translatable
   category        String?
   liveUrl         String?
