@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../core/services/api.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
@@ -12,6 +12,11 @@ import type { Experience } from '../../core/models';
     <section class="section">
       <div class="container">
         <h1>Experience</h1>
+
+        @if (experiences.length === 0) {
+          <p class="empty">No experience yet.</p>
+        }
+
         <div class="timeline">
           @for (exp of experiences; track exp.id) {
             <div class="timeline-item">
@@ -23,7 +28,7 @@ import type { Experience } from '../../core/models';
                   {{ formatDate(exp.startDate) }} – {{ exp.isCurrent ? 'Present' : formatDate(exp.endDate) }}
                 </p>
                 @if (exp.location) {
-                  <p class="location">{{ exp.location }}</p>
+                  <p class="location">📍 {{ exp.location }}</p>
                 }
                 <p class="description">{{ exp.description | translate }}</p>
               </div>
@@ -66,28 +71,45 @@ import type { Experience } from '../../core/models';
       border: 2px solid var(--color-surface);
     }
 
+    h3 { margin: 0 0 var(--space-xs); }
+
     .company {
       color: var(--color-primary);
       font-weight: 500;
+      margin: 0;
     }
 
     .date, .location {
       font-size: var(--text-sm);
       color: var(--color-text-muted);
+      margin: var(--space-xs) 0;
     }
 
     .description {
       margin-top: var(--space-sm);
       color: var(--color-text-secondary);
     }
+
+    .empty {
+      color: var(--color-text-muted);
+      text-align: center;
+      padding: var(--space-3xl);
+    }
   `],
 })
 export class ExperienceComponent implements OnInit {
   private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+
   experiences: Experience[] = [];
 
   ngOnInit() {
-    this.api.getExperience().subscribe(e => this.experiences = e);
+    this.api.getExperience().subscribe({
+      next: (e) => {
+        this.experiences = e;
+        this.cdr.detectChanges();
+      },
+    });
   }
 
   formatDate(date?: string): string {

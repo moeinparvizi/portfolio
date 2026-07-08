@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
@@ -24,11 +24,15 @@ import type { Project } from '../../core/models';
           }
         </div>
 
+        @if (filteredProjects.length === 0) {
+          <p class="empty">No projects yet.</p>
+        }
+
         <div class="projects-grid">
           @for (project of filteredProjects; track project.id) {
             <app-glass-card [hoverable]="true">
               <a [routerLink]="[project.id]" class="project-link">
-                @if (project.images?.[0]) {
+                @if (project.images && project.images.length > 0) {
                   <img [src]="project.images[0]" [alt]="project.title | translate" class="project-image" />
                 }
                 <h3>{{ project.title | translate }}</h3>
@@ -78,6 +82,8 @@ import type { Project } from '../../core/models';
       margin-bottom: var(--space-md);
     }
 
+    h3 { margin: 0 0 var(--space-sm); }
+
     .summary {
       font-size: var(--text-sm);
       color: var(--color-text-secondary);
@@ -97,10 +103,18 @@ import type { Project } from '../../core/models';
       color: var(--color-primary);
       font-size: var(--text-xs);
     }
+
+    .empty {
+      color: var(--color-text-muted);
+      text-align: center;
+      padding: var(--space-3xl);
+    }
   `],
 })
 export class ProjectsComponent implements OnInit {
   private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+
   projects: Project[] = [];
   activeFilter = '';
   categories: string[] = [];
@@ -111,10 +125,13 @@ export class ProjectsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.api.getProjects().subscribe(p => {
-      this.projects = p;
-      const cats = p.map(proj => proj.category).filter((c): c is string => !!c);
-      this.categories = [...new Set(cats)];
+    this.api.getProjects().subscribe({
+      next: (p) => {
+        this.projects = p;
+        const cats = p.map(proj => proj.category).filter((c): c is string => !!c);
+        this.categories = [...new Set(cats)];
+        this.cdr.detectChanges();
+      },
     });
   }
 }

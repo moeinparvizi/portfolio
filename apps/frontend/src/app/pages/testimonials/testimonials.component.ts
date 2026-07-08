@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
@@ -14,6 +14,10 @@ import type { Testimonial } from '../../core/models';
     <section class="section">
       <div class="container">
         <h1>Testimonials</h1>
+
+        @if (testimonials.length === 0) {
+          <p class="empty">No testimonials yet.</p>
+        }
 
         <div class="testimonials-grid">
           @for (t of testimonials; track t.id) {
@@ -86,8 +90,8 @@ import type { Testimonial } from '../../core/models';
       object-fit: cover;
     }
 
-    .name { font-weight: 600; }
-    .role { font-size: var(--text-sm); color: var(--color-text-muted); }
+    .name { font-weight: 600; margin: 0; }
+    .role { font-size: var(--text-sm); color: var(--color-text-muted); margin: 0; }
 
     .rating {
       margin-top: var(--space-md);
@@ -121,17 +125,29 @@ import type { Testimonial } from '../../core/models';
         border-color: var(--color-primary);
       }
     }
+
+    .empty {
+      color: var(--color-text-muted);
+      text-align: center;
+      padding: var(--space-3xl);
+    }
   `],
 })
 export class TestimonialsComponent implements OnInit {
   private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+
   testimonials: Testimonial[] = [];
   submitting = false;
-
   newTestimonial: Partial<Testimonial> = {};
 
   ngOnInit() {
-    this.api.getTestimonials().subscribe(t => this.testimonials = t);
+    this.api.getTestimonials().subscribe({
+      next: (t) => {
+        this.testimonials = t;
+        this.cdr.detectChanges();
+      },
+    });
   }
 
   submitTestimonial() {
