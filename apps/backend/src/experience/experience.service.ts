@@ -18,12 +18,20 @@ export class ExperienceService {
   }
 
   async create(dto: CreateExperienceDto) {
-    return this.prisma.experience.create({ data: dto as any });
+    const data = {
+      ...dto,
+      startDate: new Date(dto.startDate),
+      endDate: dto.endDate ? new Date(dto.endDate) : null,
+    };
+    return this.prisma.experience.create({ data: data as any });
   }
 
   async update(id: string, dto: UpdateExperienceDto) {
     await this.findOne(id);
-    return this.prisma.experience.update({ where: { id }, data: dto as any });
+    const data: any = { ...dto };
+    if (dto.startDate) data.startDate = new Date(dto.startDate);
+    if (dto.endDate) data.endDate = new Date(dto.endDate);
+    return this.prisma.experience.update({ where: { id }, data });
   }
 
   async remove(id: string) {

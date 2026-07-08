@@ -18,12 +18,20 @@ export class EducationService {
   }
 
   async create(dto: CreateEducationDto) {
-    return this.prisma.education.create({ data: dto as any });
+    const data = {
+      ...dto,
+      startDate: new Date(dto.startDate),
+      endDate: dto.endDate ? new Date(dto.endDate) : null,
+    };
+    return this.prisma.education.create({ data: data as any });
   }
 
   async update(id: string, dto: UpdateEducationDto) {
     await this.findOne(id);
-    return this.prisma.education.update({ where: { id }, data: dto as any });
+    const data: any = { ...dto };
+    if (dto.startDate) data.startDate = new Date(dto.startDate);
+    if (dto.endDate) data.endDate = new Date(dto.endDate);
+    return this.prisma.education.update({ where: { id }, data });
   }
 
   async remove(id: string) {
