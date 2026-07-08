@@ -46,7 +46,9 @@ export const routes: Routes = [
     ],
   },
 
-  // Redirects
+  // Root redirect
   { path: '', redirectTo: '/en', pathMatch: 'full' },
-  { path: '**', redirectTo: '/en' },
+
+  // 404 Page (must be last)
+  { path: '**', loadComponent: () => import('./pages/not-found/not-found.component').then(m => m.NotFoundComponent) },
 ];
