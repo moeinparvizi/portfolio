@@ -1,21 +1,21 @@
 // ─── Design Tokens ─────────────────────────────────────
-// Brand-specific color palette — NOT generic AI template
+// Galaxy-themed portfolio
 
 :root {
-  // Brand colors
-  --color-primary: #2563EB;
-  --color-primary-soft: #3B82F6;
-  --color-primary-hover: #1D4ED8;
-  --color-secondary: #7C3AED;
-  --color-accent: #06B6D4;
+  // Brand colors - Cosmic palette
+  --color-primary: #6366F1;      // Indigo
+  --color-primary-soft: #818CF8;
+  --color-primary-hover: #4F46E5;
+  --color-secondary: #A855F7;    // Purple
+  --color-accent: #06B6D4;       // Cyan
   --color-success: #10B981;
   --color-warning: #F59E0B;
   --color-error: #EF4444;
 
-  // Surfaces (Light mode)
+  // Surfaces (Light mode - Sunny sky)
   --color-surface: #FFFFFF;
   --color-surface-alt: #F8FAFC;
-  --color-background: #F1F5F9;
+  --color-background: #F0F4FF;
   --color-text: #0F172A;
   --color-text-secondary: #475569;
   --color-text-muted: #94A3B8;
@@ -23,16 +23,16 @@
   --color-border-light: #F1F5F9;
 
   // Glass tokens
-  --glass-bg: rgba(255, 255, 255, 0.65);
-  --glass-border: rgba(255, 255, 255, 0.35);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.4);
   --glass-blur: 20px;
   --glass-highlight: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.5) 0%,
-    rgba(255, 255, 255, 0.1) 40%,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(255, 255, 255, 0.15) 40%,
     transparent 60%
   );
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 
   // Spacing
   --space-xs: 4px;
@@ -43,7 +43,7 @@
   --space-2xl: 48px;
   --space-3xl: 64px;
 
-  // Border radius (concentric system)
+  // Border radius
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -74,27 +74,28 @@
   --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-// ─── Dark Mode ─────────────────────────────────────────
+// ─── Dark Mode (Galaxy) ────────────────────────────────
 
 [data-theme='dark'] {
-  --color-surface: #1E293B;
-  --color-surface-alt: #1A2332;
-  --color-background: #0F172A;
+  --color-surface: rgba(30, 41, 59, 0.8);
+  --color-surface-alt: rgba(15, 23, 42, 0.6);
+  --color-background: #0B0D17;
   --color-text: #F1F5F9;
   --color-text-secondary: #94A3B8;
   --color-text-muted: #64748B;
-  --color-border: #334155;
-  --color-border-light: #1E293B;
+  --color-border: rgba(99, 102, 241, 0.2);
+  --color-border-light: rgba(255, 255, 255, 0.05);
 
-  --glass-bg: rgba(15, 23, 42, 0.65);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  // Galaxy glass - more translucent, cosmic glow
+  --glass-bg: rgba(15, 23, 42, 0.5);
+  --glass-border: rgba(99, 102, 241, 0.15);
   --glass-highlight: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.12) 0%,
-    rgba(255, 255, 255, 0.03) 40%,
+    rgba(139, 92, 246, 0.15) 0%,
+    rgba(99, 102, 241, 0.05) 40%,
     transparent 60%
   );
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 60px rgba(99, 102, 241, 0.1);
 }
 
 // ─── RTL Support ───────────────────────────────────────
