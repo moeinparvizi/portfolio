@@ -19,6 +19,10 @@ async function bootstrap() {
   // Global prefix
   app.setGlobalPrefix('api');
 
+  // Body size limit (10MB for base64 images)
+  app.use(require('express').json({ limit: '10mb' }));
+  app.use(require('express').urlencoded({ extended: true, limit: '10mb' }));
+
   // Validation
   app.useGlobalPipes(
     new ValidationPipe({

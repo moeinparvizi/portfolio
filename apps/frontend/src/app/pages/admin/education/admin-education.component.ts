@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/services/api.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { GlassCardComponent } from '../../../shared/components/glass-card/glass-card.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import type { Education } from '../../../core/models';
@@ -132,6 +133,7 @@ import type { Education } from '../../../core/models';
 export class AdminEducationComponent implements OnInit {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
+  private toast = inject(ToastService);
 
   items: Education[] = [];
   showForm = false;
@@ -165,13 +167,36 @@ export class AdminEducationComponent implements OnInit {
   }
 
   save() {
+    if (!this.formData.institution.en && !this.formData.institution.fa && !this.formData.institution.de) {
+      this.toast.warning('Institution is required');
+      return;
+    }
+    if (!this.formData.degree.en && !this.formData.degree.fa && !this.formData.degree.de) {
+      this.toast.warning('Degree is required');
+      return;
+    }
+    if (!this.formData.startDate) {
+      this.toast.warning('Start date is required');
+      return;
+    }
+
     this.saving = true;
     const obs = this.editingId ? this.api.updateEducation(this.editingId, this.formData) : this.api.createEducation(this.formData);
-    obs.subscribe({ next: () => { this.saving = false; this.cancel(); this.load(); }, error: () => { this.saving = false; } });
+    obs.subscribe({
+      next: () => { this.saving = false; this.cancel(); this.load(); this.toast.success('Education saved!'); },
+      error: () => { this.saving = false; this.toast.error('Failed to save education'); },
+    });
   }
 
   cancel() { this.showForm = false; this.editingId = null; this.formData = this.emptyForm(); }
   confirmDelete(id: string) { this.deleteId = id; this.showConfirm = true; }
-  deleteItem() { if (this.deleteId) { this.api.deleteEducation(this.deleteId).subscribe(() => { this.load(); this.showConfirm = false; }); } }
+  deleteItem() {
+    if (this.deleteId) {
+      this.api.deleteEducation(this.deleteId).subscribe({
+        next: () => { this.load(); this.showConfirm = false; this.toast.success('Education deleted!'); },
+        error: () => { this.showConfirm = false; this.toast.error('Failed to delete'); },
+      });
+    }
+  }
   formatDate(d?: string) { return d ? new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }) : ''; }
 }

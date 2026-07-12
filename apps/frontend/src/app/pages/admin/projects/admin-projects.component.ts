@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/services/api.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { GlassCardComponent } from '../../../shared/components/glass-card/glass-card.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import type { Project } from '../../../core/models';
@@ -34,8 +35,8 @@ import type { Project } from '../../../core/models';
               }
             </div>
 
-            <div class="form-group">
-              <label>Title ({{ activeLang.toUpperCase() }})</label>
+            <div class="form-group required">
+              <label>Title ({{ activeLang.toUpperCase() }}) <span class="req">*</span></label>
               <input type="text" [(ngModel)]="formData.title[activeLang]" [name]="'title_' + activeLang" placeholder="Project name" required />
             </div>
 
@@ -109,7 +110,7 @@ import type { Project } from '../../../core/models';
       }
 
       <!-- Projects List -->
-      <div class="projects-list">
+      <div class="list">
         @for (project of projects; track project.id) {
           <app-glass-card>
             <div class="project-card">
@@ -162,112 +163,36 @@ import type { Project } from '../../../core/models';
   `,
   styles: [`
     .admin-page { padding: var(--space-xl); max-width: 1000px; }
-
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--space-xl);
-      h1 { font-size: var(--text-2xl); margin: 0; }
-    }
-
-    .form-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--space-lg);
-      h3 { margin: 0; font-size: var(--text-xl); }
-    }
-
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xl); h1 { font-size: var(--text-2xl); margin: 0; } }
+    .form-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg); h3 { margin: 0; } }
     .lang-tabs { display: flex; gap: var(--space-sm); margin-bottom: var(--space-lg); }
-
-    .tab {
-      padding: var(--space-sm) var(--space-lg);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-md);
-      background: transparent;
-      color: var(--color-text-secondary);
-      cursor: pointer;
-      font-family: var(--font-body);
-      &.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
-    }
-
-    .form-group {
-      margin-bottom: var(--space-lg);
-      label { display: block; font-weight: 500; margin-bottom: var(--space-sm); }
-      input, textarea, select {
-        width: 100%;
-        padding: var(--space-md);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius-md);
-        background: var(--color-surface);
-        color: var(--color-text);
-        font-family: var(--font-body);
-        &:focus { outline: none; border-color: var(--color-primary); }
-      }
-    }
-
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); }
-
+    .tab { padding: var(--space-sm) var(--space-lg); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: transparent; color: var(--color-text-secondary); cursor: pointer; font-family: var(--font-body); &.active { background: var(--color-primary); color: white; border-color: var(--color-primary); } }
+    .form-group { margin-bottom: var(--space-lg); label { display: block; font-weight: 500; margin-bottom: var(--space-sm); } input, textarea, select { width: 100%; padding: var(--space-md); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); font-family: var(--font-body); &:focus { outline: none; border-color: var(--color-primary); } &.ng-invalid.ng-touched { border-color: var(--color-error); } } }
+    .required label { color: var(--color-text); }
+    .req { color: var(--color-error); margin-left: 2px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); @media (max-width: 600px) { grid-template-columns: 1fr; } }
     .checkbox-group { display: flex; gap: var(--space-lg); }
-
-    .checkbox {
-      display: flex;
-      align-items: center;
-      gap: var(--space-sm);
-      cursor: pointer;
-      input { width: auto; }
-    }
-
+    .checkbox { display: flex; align-items: center; gap: var(--space-sm); cursor: pointer; input { width: auto; } }
     .form-actions { display: flex; gap: var(--space-sm); justify-content: flex-end; margin-top: var(--space-lg); }
-
-    .projects-list { display: flex; flex-direction: column; gap: var(--space-lg); }
-
+    .list { display: flex; flex-direction: column; gap: var(--space-lg); }
     .project-card { display: flex; flex-direction: column; gap: var(--space-sm); }
-
-    .project-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-
+    .project-header { display: flex; justify-content: space-between; align-items: flex-start; }
     .project-info h4 { margin: 0; }
-
     .project-badges { display: flex; gap: var(--space-sm); }
-
-    .badge {
-      font-size: var(--text-xs);
-      padding: 2px 8px;
-      border-radius: var(--radius-sm);
-      &.draft { background: var(--color-warning); color: white; }
-      &.published { background: var(--color-success); color: white; }
-      &.featured { background: var(--color-primary); color: white; }
-    }
-
+    .badge { font-size: var(--text-xs); padding: 2px 8px; border-radius: var(--radius-sm); &.draft { background: var(--color-warning); color: white; } &.published { background: var(--color-success); color: white; } &.featured { background: var(--color-primary); color: white; } }
     .project-summary { color: var(--color-text-secondary); font-size: var(--text-sm); margin: 0; }
-
     .project-tags { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
-
-    .tag {
-      padding: 2px 8px;
-      border-radius: var(--radius-sm);
-      background: rgba(37, 99, 235, 0.1);
-      color: var(--color-primary);
-      font-size: var(--text-xs);
-    }
-
+    .tag { padding: 2px 8px; border-radius: var(--radius-sm); background: rgba(99, 102, 241, 0.1); color: var(--color-primary); font-size: var(--text-xs); }
     .project-actions { display: flex; gap: var(--space-sm); margin-top: var(--space-sm); }
-
     .btn-danger { color: var(--color-error); &:hover { background: rgba(239, 68, 68, 0.1); } }
-
     .empty-state { text-align: center; padding: var(--space-3xl); color: var(--color-text-muted); }
-
     .error { color: var(--color-error); margin-top: var(--space-md); text-align: center; }
   `],
 })
 export class AdminProjectsComponent implements OnInit {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
+  private toast = inject(ToastService);
 
   projects: Project[] = [];
   showForm = false;
@@ -292,7 +217,7 @@ export class AdminProjectsComponent implements OnInit {
   load() {
     this.api.getProjects().subscribe({
       next: (p) => { this.projects = p; this.cdr.detectChanges(); },
-      error: (err) => console.error('Error:', err),
+      error: () => this.toast.error('Failed to load projects'),
     });
   }
 
@@ -339,6 +264,13 @@ export class AdminProjectsComponent implements OnInit {
   }
 
   save() {
+    // Validate required fields
+    if (!this.formData.title.en && !this.formData.title.fa && !this.formData.title.de) {
+      this.error = 'Title is required in at least one language';
+      this.toast.warning('Please enter a project title');
+      return;
+    }
+
     this.saving = true;
     this.error = '';
 
@@ -352,8 +284,18 @@ export class AdminProjectsComponent implements OnInit {
       : this.api.createProject(data);
 
     obs.subscribe({
-      next: () => { this.saving = false; this.cancel(); this.load(); },
-      error: (err) => { this.saving = false; this.error = 'Failed to save project'; },
+      next: () => {
+        this.saving = false;
+        this.cancel();
+        this.load();
+        this.toast.success(this.editingId ? 'Project updated!' : 'Project created!');
+      },
+      error: (err) => {
+        console.error('Error saving project:', err);
+        this.saving = false;
+        this.error = 'Failed to save project';
+        this.toast.error('Failed to save project');
+      },
     });
   }
 
@@ -370,8 +312,8 @@ export class AdminProjectsComponent implements OnInit {
   deleteProject() {
     if (this.deleteId) {
       this.api.deleteProject(this.deleteId).subscribe({
-        next: () => { this.load(); this.showConfirm = false; },
-        error: () => { this.showConfirm = false; },
+        next: () => { this.load(); this.showConfirm = false; this.toast.success('Project deleted!'); },
+        error: () => { this.showConfirm = false; this.toast.error('Failed to delete project'); },
       });
     }
   }

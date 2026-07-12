@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/services/api.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { GlassCardComponent } from '../../../shared/components/glass-card/glass-card.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import type { Experience } from '../../../core/models';
@@ -145,6 +146,7 @@ import type { Experience } from '../../../core/models';
 export class AdminExperienceComponent implements OnInit {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
+  private toast = inject(ToastService);
 
   items: Experience[] = [];
   showForm = false;
@@ -178,13 +180,36 @@ export class AdminExperienceComponent implements OnInit {
   }
 
   save() {
+    if (!this.formData.position.en && !this.formData.position.fa && !this.formData.position.de) {
+      this.toast.warning('Position is required');
+      return;
+    }
+    if (!this.formData.company.en && !this.formData.company.fa && !this.formData.company.de) {
+      this.toast.warning('Company is required');
+      return;
+    }
+    if (!this.formData.startDate) {
+      this.toast.warning('Start date is required');
+      return;
+    }
+
     this.saving = true;
     const obs = this.editingId ? this.api.updateExperience(this.editingId, this.formData) : this.api.createExperience(this.formData);
-    obs.subscribe({ next: () => { this.saving = false; this.cancel(); this.load(); }, error: () => { this.saving = false; } });
+    obs.subscribe({
+      next: () => { this.saving = false; this.cancel(); this.load(); this.toast.success('Experience saved!'); },
+      error: () => { this.saving = false; this.toast.error('Failed to save experience'); },
+    });
   }
 
   cancel() { this.showForm = false; this.editingId = null; this.formData = this.emptyForm(); }
   confirmDelete(id: string) { this.deleteId = id; this.showConfirm = true; }
-  deleteItem() { if (this.deleteId) { this.api.deleteExperience(this.deleteId).subscribe(() => { this.load(); this.showConfirm = false; }); } }
+  deleteItem() {
+    if (this.deleteId) {
+      this.api.deleteExperience(this.deleteId).subscribe({
+        next: () => { this.load(); this.showConfirm = false; this.toast.success('Experience deleted!'); },
+        error: () => { this.showConfirm = false; this.toast.error('Failed to delete'); },
+      });
+    }
+  }
   formatDate(d?: string) { return d ? new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }) : ''; }
 }
