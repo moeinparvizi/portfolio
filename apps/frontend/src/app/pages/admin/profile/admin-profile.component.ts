@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/services/api.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { GlassCardComponent } from '../../../shared/components/glass-card/glass-card.component';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 import type { Profile } from '../../../core/models';
@@ -351,6 +352,7 @@ import type { Profile } from '../../../core/models';
 export class AdminProfileComponent implements OnInit {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
+  private toast = inject(ToastService);
 
   profile: Profile | null = null;
   formData: any = {};
@@ -441,12 +443,14 @@ export class AdminProfileComponent implements OnInit {
         this.saving = false;
         this.saved = true;
         this.profile = result;
+        this.toast.success('Profile saved successfully!');
         setTimeout(() => this.saved = false, 3000);
         this.cdr.detectChanges();
       },
       error: (err) => {
         this.saving = false;
         this.error = 'Failed to save profile';
+        this.toast.error('Failed to save profile');
         this.cdr.detectChanges();
       },
     });

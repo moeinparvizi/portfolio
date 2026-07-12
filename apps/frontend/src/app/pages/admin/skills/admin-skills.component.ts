@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/services/api.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { GlassCardComponent } from '../../../shared/components/glass-card/glass-card.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import type { Skill } from '../../../core/models';
@@ -352,6 +353,7 @@ import type { Skill } from '../../../core/models';
 export class AdminSkillsComponent implements OnInit {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
+  private toast = inject(ToastService);
 
   skills: Skill[] = [];
   showForm = false;
@@ -421,6 +423,7 @@ export class AdminSkillsComponent implements OnInit {
   save() {
     if (!this.formData.name.en && !this.formData.name.fa && !this.formData.name.de) {
       this.error = 'Please enter at least one skill name';
+      this.toast.warning('Please enter at least one skill name');
       return;
     }
 
@@ -444,11 +447,13 @@ export class AdminSkillsComponent implements OnInit {
         this.saving = false;
         this.cancel();
         this.load();
+        this.toast.success(this.editingId ? 'Skill updated!' : 'Skill created!');
       },
       error: (err) => {
         console.error('Error saving skill:', err);
         this.saving = false;
         this.error = 'Failed to save skill';
+        this.toast.error('Failed to save skill');
       },
     });
   }
@@ -471,10 +476,12 @@ export class AdminSkillsComponent implements OnInit {
         next: () => {
           this.load();
           this.showConfirm = false;
+          this.toast.success('Skill deleted!');
         },
         error: (err) => {
           console.error('Error deleting skill:', err);
           this.showConfirm = false;
+          this.toast.error('Failed to delete skill');
         },
       });
     }
