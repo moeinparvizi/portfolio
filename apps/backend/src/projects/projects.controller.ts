@@ -15,9 +15,14 @@ export class ProjectsController {
 
   @Get()
   @Public()
-  @ApiOperation({ summary: 'Get all published projects' })
-  findAll(@Query('all') all?: string) {
-    return this.projectsService.findAll(all !== 'true');
+  @ApiOperation({ summary: 'Get all projects' })
+  findAll(@Query('all') all?: string, @Query('published') published?: string) {
+    // Return all projects by default (admin needs to see drafts too)
+    // Use ?published=true to get only published projects
+    if (published === 'true') {
+      return this.projectsService.findAll(true);
+    }
+    return this.projectsService.findAll(false);
   }
 
   @Get('featured')
