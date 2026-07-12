@@ -88,6 +88,11 @@ import type { Profile } from '../../../core/models';
                 </div>
 
                 <div class="form-group">
+                  <label>Email</label>
+                  <input type="email" [(ngModel)]="formData.socialLinks.email" name="email" placeholder="your@email.com" />
+                </div>
+
+                <div class="form-group">
                   <label>GitHub URL</label>
                   <input type="text" [(ngModel)]="formData.socialLinks.github" name="github" placeholder="https://github.com/..." />
                 </div>
@@ -95,6 +100,11 @@ import type { Profile } from '../../../core/models';
                 <div class="form-group">
                   <label>LinkedIn URL</label>
                   <input type="text" [(ngModel)]="formData.socialLinks.linkedin" name="linkedin" placeholder="https://linkedin.com/..." />
+                </div>
+
+                <div class="form-group">
+                  <label>Twitter URL</label>
+                  <input type="text" [(ngModel)]="formData.socialLinks.twitter" name="twitter" placeholder="https://twitter.com/..." />
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-lg" [disabled]="saving">
@@ -376,7 +386,7 @@ export class AdminProfileComponent implements OnInit {
           avatarUrl: p.avatarUrl || '',
           logoUrl: p.logoUrl || '',
           heroCtaLink: p.heroCtaLink || '',
-          socialLinks: { github: '', linkedin: '', ...(p.socialLinks || {}) },
+          socialLinks: { email: '', github: '', linkedin: '', twitter: '', ...(p.socialLinks || {}) },
         };
         this.socialLinksJson = JSON.stringify(p.socialLinks || {}, null, 2);
         this.loading = false;

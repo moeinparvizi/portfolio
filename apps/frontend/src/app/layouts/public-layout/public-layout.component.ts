@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ApiService } from '../../core/services/api.service';
 import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
 import { LanguageSwitcherComponent } from '../../shared/components/language-switcher/language-switcher.component';
+import type { Profile } from '../../core/models';
 
 @Component({
   selector: 'app-public-layout',
@@ -55,10 +57,20 @@ import { LanguageSwitcherComponent } from '../../shared/components/language-swit
 
     <footer class="footer">
       <div class="container footer-inner">
-        <p>&copy; 2026 All rights reserved.</p>
+        <p>&copy; 2026 {{ profile?.fullName?.['en'] || 'Portfolio' }}. All rights reserved.</p>
         <div class="footer-links">
-          <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
-          <a href="https://linkedin.com" target="_blank" rel="noopener">LinkedIn</a>
+          @if (profile?.socialLinks?.['email']) {
+            <a href="mailto:{{ profile!.socialLinks['email'] }}">✉️ Email</a>
+          }
+          @if (profile?.socialLinks?.['github']) {
+            <a [href]="profile!.socialLinks['github']" target="_blank" rel="noopener">GitHub</a>
+          }
+          @if (profile?.socialLinks?.['linkedin']) {
+            <a [href]="profile!.socialLinks['linkedin']" target="_blank" rel="noopener">LinkedIn</a>
+          }
+          @if (profile?.socialLinks?.['twitter']) {
+            <a [href]="profile!.socialLinks['twitter']" target="_blank" rel="noopener">Twitter</a>
+          }
         </div>
       </div>
     </footer>
@@ -100,7 +112,6 @@ import { LanguageSwitcherComponent } from '../../shared/components/language-swit
       text-decoration: none;
     }
 
-    /* Desktop Nav */
     .desktop-nav {
       display: flex;
       gap: var(--space-sm);
@@ -126,7 +137,6 @@ import { LanguageSwitcherComponent } from '../../shared/components/language-swit
       }
     }
 
-    /* Mobile Menu Toggle */
     .menu-toggle {
       display: none;
       flex-direction: column;
@@ -145,22 +155,15 @@ import { LanguageSwitcherComponent } from '../../shared/components/language-swit
         border-radius: 2px;
       }
 
-      &.active span:nth-child(1) {
-        transform: rotate(45deg) translate(5px, 5px);
-      }
-      &.active span:nth-child(2) {
-        opacity: 0;
-      }
-      &.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(5px, -5px);
-      }
+      &.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+      &.active span:nth-child(2) { opacity: 0; }
+      &.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
       @media (max-width: 900px) {
         display: flex;
       }
     }
 
-    /* Mobile Nav */
     .mobile-nav {
       display: flex;
       flex-direction: column;
@@ -223,12 +226,26 @@ import { LanguageSwitcherComponent } from '../../shared/components/language-swit
         font-size: var(--text-sm);
         color: var(--color-text-secondary);
         text-decoration: none;
+        transition: color var(--transition-fast);
 
         &:hover { color: var(--color-primary); }
       }
     }
   `],
 })
-export class PublicLayoutComponent {
+export class PublicLayoutComponent implements OnInit {
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+
   menuOpen = false;
+  profile: Profile | null = null;
+
+  ngOnInit() {
+    this.api.getProfile().subscribe({
+      next: (p) => {
+        this.profile = p;
+        this.cdr.detectChanges();
+      },
+    });
+  }
 }
