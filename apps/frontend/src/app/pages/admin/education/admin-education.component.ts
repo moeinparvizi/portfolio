@@ -34,14 +34,14 @@ import type { Education } from '../../../core/models';
               }
             </div>
 
-            <div class="form-group">
-              <label>Institution ({{ activeLang.toUpperCase() }})</label>
+            <div class="form-group required">
+              <label>Institution ({{ activeLang.toUpperCase() }}) <span class="req">*</span></label>
               <input type="text" [(ngModel)]="formData.institution[activeLang]" [name]="'inst_' + activeLang" placeholder="e.g., University of Tehran" required />
             </div>
 
             <div class="form-row">
-              <div class="form-group">
-                <label>Degree ({{ activeLang.toUpperCase() }})</label>
+              <div class="form-group required">
+                <label>Degree ({{ activeLang.toUpperCase() }}) <span class="req">*</span></label>
                 <input type="text" [(ngModel)]="formData.degree[activeLang]" [name]="'deg_' + activeLang" placeholder="e.g., BSc, MSc" required />
               </div>
               <div class="form-group">
@@ -56,8 +56,8 @@ import type { Education } from '../../../core/models';
             </div>
 
             <div class="form-row">
-              <div class="form-group">
-                <label>Start Date</label>
+              <div class="form-group required">
+                <label>Start Date <span class="req">*</span></label>
                 <input type="date" [(ngModel)]="formData.startDate" name="startDate" required />
               </div>
               <div class="form-group">
@@ -93,7 +93,7 @@ import type { Education } from '../../../core/models';
                   <p class="institution">{{ edu.institution['en'] || '' }}</p>
                 </div>
                 <div class="item-date">
-                  {{ formatDate(edu.startDate) }} – {{ formatDate(edu.endDate) }}
+                  {{ formatDate(edu.startDate) }} – {{ edu.endDate ? formatDate(edu.endDate) : 'Present' }}
                 </div>
               </div>
               <div class="item-actions">
@@ -103,7 +103,7 @@ import type { Education } from '../../../core/models';
             </div>
           </app-glass-card>
         } @empty {
-          <div class="empty-state"><p>No education yet.</p></div>
+          <div class="empty-state"><p>No education yet. Click "Add Education" to create one.</p></div>
         }
       </div>
 
@@ -117,7 +117,9 @@ import type { Education } from '../../../core/models';
     .lang-tabs { display: flex; gap: var(--space-sm); margin-bottom: var(--space-lg); }
     .tab { padding: var(--space-sm) var(--space-lg); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: transparent; color: var(--color-text-secondary); cursor: pointer; font-family: var(--font-body); &.active { background: var(--color-primary); color: white; border-color: var(--color-primary); } }
     .form-group { margin-bottom: var(--space-lg); label { display: block; font-weight: 500; margin-bottom: var(--space-sm); } input, textarea { width: 100%; padding: var(--space-md); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); font-family: var(--font-body); &:focus { outline: none; border-color: var(--color-primary); } } }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); }
+    .required label { color: var(--color-text); }
+    .req { color: var(--color-error); margin-left: 2px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); @media (max-width: 600px) { grid-template-columns: 1fr; } }
     .form-actions { display: flex; gap: var(--space-sm); justify-content: flex-end; margin-top: var(--space-lg); }
     .list { display: flex; flex-direction: column; gap: var(--space-lg); }
     .item-card { display: flex; flex-direction: column; gap: var(--space-sm); }
@@ -144,13 +146,18 @@ export class AdminEducationComponent implements OnInit {
   saving = false;
 
   formData: any = this.emptyForm();
-  languages = [{ code: 'fa' as const, label: 'فارسی' }, { code: 'en' as const, label: 'English' }, { code: 'de' as const, label: 'Deutsch' }];
+  languages = [
+    { code: 'fa' as const, label: 'فارسی' },
+    { code: 'en' as const, label: 'English' },
+    { code: 'de' as const, label: 'Deutsch' },
+  ];
 
   ngOnInit() { this.load(); }
 
   load() {
     this.api.getEducation().subscribe({
-      next: (e) => { this.items = e; this.cdr.detectChanges(); },
+      next: (e) => { this.items = []; this.cdr.detectChanges(); this.items = e; this.cdr.detectChanges(); },
+      error: () => this.toast.error('Failed to load education'),
     });
   }
 
@@ -167,23 +174,15 @@ export class AdminEducationComponent implements OnInit {
   }
 
   save() {
-    if (!this.formData.institution.en && !this.formData.institution.fa && !this.formData.institution.de) {
-      this.toast.warning('Institution is required');
-      return;
-    }
-    if (!this.formData.degree.en && !this.formData.degree.fa && !this.formData.degree.de) {
-      this.toast.warning('Degree is required');
-      return;
-    }
-    if (!this.formData.startDate) {
-      this.toast.warning('Start date is required');
-      return;
-    }
+    if (!this.formData.institution.en && !this.formData.institution.fa && !this.formData.institution.de) { this.toast.warning('Institution is required'); return; }
+    if (!this.formData.degree.en && !this.formData.degree.fa && !this.formData.degree.de) { this.toast.warning('Degree is required'); return; }
+    if (!this.formData.startDate) { this.toast.warning('Start date is required'); return; }
 
     this.saving = true;
+    const wasEditing = !!this.editingId;
     const obs = this.editingId ? this.api.updateEducation(this.editingId, this.formData) : this.api.createEducation(this.formData);
     obs.subscribe({
-      next: () => { this.saving = false; this.cancel(); this.load(); this.toast.success('Education saved!'); },
+      next: () => { this.saving = false; this.cancel(); this.load(); this.toast.success(wasEditing ? 'Education updated!' : 'Education created!'); },
       error: () => { this.saving = false; this.toast.error('Failed to save education'); },
     });
   }

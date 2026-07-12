@@ -34,13 +34,13 @@ import type { Experience } from '../../../core/models';
               }
             </div>
 
-            <div class="form-group">
-              <label>Position ({{ activeLang.toUpperCase() }})</label>
+            <div class="form-group required">
+              <label>Position ({{ activeLang.toUpperCase() }}) <span class="req">*</span></label>
               <input type="text" [(ngModel)]="formData.position[activeLang]" [name]="'pos_' + activeLang" placeholder="e.g., Senior Developer" required />
             </div>
 
-            <div class="form-group">
-              <label>Company ({{ activeLang.toUpperCase() }})</label>
+            <div class="form-group required">
+              <label>Company ({{ activeLang.toUpperCase() }}) <span class="req">*</span></label>
               <input type="text" [(ngModel)]="formData.company[activeLang]" [name]="'comp_' + activeLang" placeholder="e.g., Google" required />
             </div>
 
@@ -50,8 +50,8 @@ import type { Experience } from '../../../core/models';
             </div>
 
             <div class="form-row">
-              <div class="form-group">
-                <label>Start Date</label>
+              <div class="form-group required">
+                <label>Start Date <span class="req">*</span></label>
                 <input type="date" [(ngModel)]="formData.startDate" name="startDate" required />
               </div>
               <div class="form-group">
@@ -113,7 +113,7 @@ import type { Experience } from '../../../core/models';
             </div>
           </app-glass-card>
         } @empty {
-          <div class="empty-state"><p>No experience yet.</p></div>
+          <div class="empty-state"><p>No experience yet. Click "Add Experience" to create one.</p></div>
         }
       </div>
 
@@ -127,7 +127,9 @@ import type { Experience } from '../../../core/models';
     .lang-tabs { display: flex; gap: var(--space-sm); margin-bottom: var(--space-lg); }
     .tab { padding: var(--space-sm) var(--space-lg); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: transparent; color: var(--color-text-secondary); cursor: pointer; font-family: var(--font-body); &.active { background: var(--color-primary); color: white; border-color: var(--color-primary); } }
     .form-group { margin-bottom: var(--space-lg); label { display: block; font-weight: 500; margin-bottom: var(--space-sm); } input, textarea { width: 100%; padding: var(--space-md); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); font-family: var(--font-body); &:focus { outline: none; border-color: var(--color-primary); } } }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); }
+    .required label { color: var(--color-text); }
+    .req { color: var(--color-error); margin-left: 2px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); @media (max-width: 600px) { grid-template-columns: 1fr; } }
     .checkbox-group { display: flex; gap: var(--space-lg); }
     .checkbox { display: flex; align-items: center; gap: var(--space-sm); cursor: pointer; input { width: auto; } }
     .form-actions { display: flex; gap: var(--space-sm); justify-content: flex-end; margin-top: var(--space-lg); }
@@ -157,13 +159,18 @@ export class AdminExperienceComponent implements OnInit {
   saving = false;
 
   formData: any = this.emptyForm();
-  languages = [{ code: 'fa' as const, label: 'فارسی' }, { code: 'en' as const, label: 'English' }, { code: 'de' as const, label: 'Deutsch' }];
+  languages = [
+    { code: 'fa' as const, label: 'فارسی' },
+    { code: 'en' as const, label: 'English' },
+    { code: 'de' as const, label: 'Deutsch' },
+  ];
 
   ngOnInit() { this.load(); }
 
   load() {
     this.api.getExperience().subscribe({
-      next: (e) => { this.items = e; this.cdr.detectChanges(); },
+      next: (e) => { this.items = []; this.cdr.detectChanges(); this.items = e; this.cdr.detectChanges(); },
+      error: () => this.toast.error('Failed to load experience'),
     });
   }
 
@@ -180,23 +187,15 @@ export class AdminExperienceComponent implements OnInit {
   }
 
   save() {
-    if (!this.formData.position.en && !this.formData.position.fa && !this.formData.position.de) {
-      this.toast.warning('Position is required');
-      return;
-    }
-    if (!this.formData.company.en && !this.formData.company.fa && !this.formData.company.de) {
-      this.toast.warning('Company is required');
-      return;
-    }
-    if (!this.formData.startDate) {
-      this.toast.warning('Start date is required');
-      return;
-    }
+    if (!this.formData.position.en && !this.formData.position.fa && !this.formData.position.de) { this.toast.warning('Position is required'); return; }
+    if (!this.formData.company.en && !this.formData.company.fa && !this.formData.company.de) { this.toast.warning('Company is required'); return; }
+    if (!this.formData.startDate) { this.toast.warning('Start date is required'); return; }
 
     this.saving = true;
+    const wasEditing = !!this.editingId;
     const obs = this.editingId ? this.api.updateExperience(this.editingId, this.formData) : this.api.createExperience(this.formData);
     obs.subscribe({
-      next: () => { this.saving = false; this.cancel(); this.load(); this.toast.success('Experience saved!'); },
+      next: () => { this.saving = false; this.cancel(); this.load(); this.toast.success(wasEditing ? 'Experience updated!' : 'Experience created!'); },
       error: () => { this.saving = false; this.toast.error('Failed to save experience'); },
     });
   }
