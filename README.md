@@ -1,42 +1,112 @@
-# Portfolio Website
+# 🚀 Portfolio Website
 
-A full-stack portfolio website with Angular frontend, NestJS backend, and PostgreSQL database.
+A full-stack portfolio website built with Angular 22 and NestJS 11, featuring a stunning galaxy-themed design with animated space background.
 
-## Tech Stack
+![Portfolio](https://img.shields.io/badge/Angular-22-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![Portfolio](https://img.shields.io/badge/NestJS-11-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)
+![Portfolio](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 
-- **Frontend:** Angular 22 (Signals, SSR, PWA)
-- **Backend:** NestJS 11 (JWT Auth, Swagger)
-- **Database:** PostgreSQL 16 + Prisma ORM
-- **Design:** Liquid Glass morphism, Dark/Light mode
-- **i18n:** 3 languages (English, Farsi, German) with RTL support
+## ✨ Features
 
-## Prerequisites
+### Public Website
+- 🌌 **Galaxy Theme** - Animated space background with stars, planets, rockets, and shooting stars
+- 🌓 **Dark/Light Mode** - Toggle between cosmic dark mode and sunny light mode
+- 🌍 **Multi-Language** - English, Farsi (RTL), and German support
+- 📱 **Fully Responsive** - Works on mobile, tablet, and desktop
+- 🎨 **Glass Morphism** - Modern UI with glass effect cards
+- ⚡ **Fast Performance** - Optimized with lazy loading and code splitting
 
-- Node.js 20+
-- pnpm
-- PostgreSQL 14+
-- Docker & Docker Compose (optional)
+### Admin Dashboard
+- 📊 **Dashboard** - Overview with statistics and quick actions
+- 👤 **Profile Management** - Edit personal info with photo upload
+- 🛠️ **Skills CRUD** - Add, edit, delete skills with categories
+- 📁 **Projects CRUD** - Full project management with images
+- 💼 **Experience** - Work history management
+- 🎓 **Education** - Education records management
+- 💬 **Testimonials** - Review and approve testimonials
+- ✉️ **Messages** - Contact form inbox
+- ⚙️ **Settings** - Theme, footer, and general settings
+- 📄 **Resume Builder** - Generate PDF resume with templates
 
----
+## 🛠️ Tech Stack
 
-## Running Locally
+| Layer | Technology |
+|-------|------------|
+| Frontend | Angular 22 (Signals, SSR, PWA) |
+| Backend | NestJS 11 (JWT Auth, Swagger) |
+| Database | PostgreSQL 16 + Prisma ORM |
+| Design | Liquid Glass, Galaxy Theme |
+| i18n | Transloco (EN/FA/DE) |
+| PDF | Puppeteer |
+| Docker | Docker Compose |
 
-### 1. Install Dependencies
+## 📦 Project Structure
+
+```
+portfolio/
+├── apps/
+│   ├── frontend/              # Angular 22 Frontend
+│   │   ├── src/
+│   │   │   ├── app/
+│   │   │   │   ├── core/      # Services, Guards, Interceptors
+│   │   │   │   ├── shared/    # Reusable Components
+│   │   │   │   ├── layouts/   # Public & Admin Layouts
+│   │   │   │   └── pages/     # Page Components
+│   │   │   └── styles.scss    # Global Styles
+│   │   └── e2e/               # Playwright Tests
+│   └── backend/               # NestJS 11 Backend
+│       ├── src/
+│       │   ├── auth/          # JWT Authentication
+│       │   ├── profile/       # Profile Management
+│       │   ├── skills/        # Skills CRUD
+│       │   ├── projects/      # Projects CRUD
+│       │   ├── experience/    # Experience CRUD
+│       │   ├── education/     # Education CRUD
+│       │   ├── testimonials/  # Testimonials
+│       │   ├── contact/       # Contact Messages
+│       │   ├── settings/      # Site Settings
+│       │   ├── resume/        # PDF Generation
+│       │   └── upload/        # Image Upload
+│       └── prisma/
+│           ├── schema.prisma  # Database Schema
+│           └── seed.ts        # Seed Data
+├── docker-compose.yml
+├── .env.example
+└── README.md
+```
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Node.js** 20+ (https://nodejs.org)
+- **pnpm** (https://pnpm.io)
+- **PostgreSQL** 14+ (https://postgresql.org)
+- **Git** (https://git-scm.com)
+
+### 1. Clone the Repository
 
 ```bash
+git clone https://github.com/moeinparvizi/portfolio.git
 cd portfolio
+```
+
+### 2. Install Dependencies
+
+```bash
 pnpm install
 ```
 
-### 2. Setup PostgreSQL
+### 3. Setup Database
 
-Make sure PostgreSQL is running and create the database:
+Make sure PostgreSQL is running, then:
 
 ```bash
+# Create database
 psql -U postgres -c "CREATE DATABASE portfolio;"
 ```
 
-### 3. Configure Environment
+### 4. Configure Environment
 
 ```bash
 cd apps/backend
@@ -47,11 +117,11 @@ Edit `.env` with your PostgreSQL credentials:
 
 ```env
 DATABASE_URL=postgresql://your_user:your_password@localhost:5432/portfolio
-JWT_SECRET=your-secret-key
-JWT_REFRESH_SECRET=your-refresh-secret
+JWT_SECRET=your-super-secret-key
+JWT_REFRESH_SECRET=your-super-secret-refresh-key
 ```
 
-### 4. Run Migrations & Seed
+### 5. Run Migrations & Seed
 
 ```bash
 cd apps/backend
@@ -62,11 +132,11 @@ npx prisma generate
 # Apply database migrations
 npx prisma migrate dev
 
-# Seed initial data (admin user, profile, settings)
+# Seed initial data
 npx ts-node prisma/seed.ts
 ```
 
-### 5. Start Development Servers
+### 6. Start Development Servers
 
 **Terminal 1 - Backend:**
 ```bash
@@ -80,57 +150,129 @@ cd apps/frontend
 pnpm start
 ```
 
-### 6. Access the Application
+### 7. Access the Application
 
 | Service | URL |
 |---------|-----|
-| Frontend | http://localhost:4200 |
-| Backend API | http://localhost:3000/api |
-| Swagger Docs | http://localhost:3000/api/docs |
-| Health Check | http://localhost:3000/health |
+| **Public Website** | http://localhost:4200/en |
+| **Admin Panel** | http://localhost:4200/admin/login |
+| **Backend API** | http://localhost:3000/api |
+| **Swagger Docs** | http://localhost:3000/api/docs |
 
-### 7. Login to Admin Panel
+### 8. Login to Admin
 
-- Navigate to: http://localhost:4200/admin/login
-- Username: `admin`
-- Password: `admin123`
+- **Username:** `admin`
+- **Password:** `admin123`
 
-**Important:** Change these credentials in production!
+⚠️ **Change these credentials in production!**
 
----
+## 🐳 Docker Setup
 
-## Running with Docker
-
-### 1. Setup
+### Quick Start with Docker
 
 ```bash
+# Clone and setup
+git clone https://github.com/moeinparvizi/portfolio.git
 cd portfolio
 cp .env.example .env
-# Edit .env with your settings
-```
 
-### 2. Start Services
-
-```bash
+# Start all services
 docker-compose up -d
-```
 
-### 3. Initialize Database
+# Run migrations
+docker-compose exec backend npx prisma migrate deploy
 
-```bash
-# Wait for PostgreSQL to be ready, then:
-docker-compose exec backend npx prisma migrate dev
+# Seed database
 docker-compose exec backend npx ts-node prisma/seed.ts
 ```
 
-### 4. Access
+### Docker Services
 
-- Frontend: http://localhost:4200
-- Backend: http://localhost:3000
+| Service | Port | Description |
+|---------|------|-------------|
+| frontend | 4200 | Angular App |
+| backend | 3000 | NestJS API |
+| db | 5432 | PostgreSQL |
 
----
+## 📚 API Documentation
 
-## Testing
+Swagger documentation is available at: http://localhost:3000/api/docs
+
+### Public Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/profile` | Get profile |
+| GET | `/api/skills` | Get all skills |
+| GET | `/api/projects` | Get published projects |
+| GET | `/api/projects/:id` | Get project by ID |
+| GET | `/api/experience` | Get experience |
+| GET | `/api/education` | Get education |
+| GET | `/api/testimonials` | Get approved testimonials |
+| POST | `/api/testimonials` | Submit testimonial |
+| POST | `/api/contact` | Send contact message |
+| GET | `/api/settings/:key` | Get setting |
+
+### Admin Endpoints (JWT Required)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/login` | Login |
+| POST | `/api/auth/refresh` | Refresh token |
+| PUT | `/api/profile` | Update profile |
+| POST | `/api/skills` | Create skill |
+| PUT | `/api/skills/:id` | Update skill |
+| DELETE | `/api/skills/:id` | Delete skill |
+| POST | `/api/projects` | Create project |
+| PUT | `/api/projects/:id` | Update project |
+| DELETE | `/api/projects/:id` | Delete project |
+| POST | `/api/upload/image` | Upload image |
+| POST | `/api/resume/generate` | Generate PDF |
+
+## 🎨 Design System
+
+### Galaxy Theme (Dark Mode)
+- Deep space background with gradient
+- Animated twinkling stars
+- Purple nebula glow
+- Indigo/Purple accent colors
+- Glass cards with cosmic highlights
+
+### Sunny Theme (Light Mode)
+- Soft blue sky gradient
+- Sun glow effect
+- Subtle stars for depth
+- Clean white glass cards
+
+### Colors
+
+| Color | Hex | Usage |
+|-------|-----|-------|
+| Primary | #6366F1 | Buttons, links, accents |
+| Secondary | #A855F7 | Gradients, highlights |
+| Accent | #06B6D4 | Skill bars, accents |
+| Success | #10B981 | Success states |
+| Warning | #F59E0B | Warning states |
+| Error | #EF4444 | Error states |
+
+## 🌍 Internationalization
+
+The website supports 3 languages:
+
+| Language | Code | Direction |
+|----------|------|-----------|
+| English | en | LTR |
+| Farsi | fa | RTL |
+| German | de | LTR |
+
+### Adding New Languages
+
+1. Add locale to `LocaleService`
+2. Create translation file
+3. Add language to the switcher component
+4. Update route prefixes
+
+## 🧪 Testing
 
 ### Backend Tests
 
@@ -147,127 +289,19 @@ pnpm test:e2e
 pnpm test:cov
 ```
 
-### Frontend E2E Tests
+### Frontend Tests
 
 ```bash
 cd apps/frontend
 
-# Install Playwright browsers (first time only)
-npx playwright install
+# Unit tests
+pnpm test
 
-# Run e2e tests
+# E2E tests (Playwright)
 pnpm e2e
-
-# Run with UI
-pnpm e2e:ui
 ```
 
----
-
-## Project Structure
-
-```
-portfolio/
-├── apps/
-│   ├── frontend/              # Angular 22 SSR + PWA
-│   │   ├── src/
-│   │   │   ├── app/
-│   │   │   │   ├── core/      # Services, guards, interceptors
-│   │   │   │   ├── shared/    # Reusable components, pipes
-│   │   │   │   ├── layouts/   # Public & Admin layouts
-│   │   │   │   └── pages/     # Page components
-│   │   │   └── styles.scss    # Global styles + design tokens
-│   │   └── e2e/               # Playwright tests
-│   └── backend/               # NestJS 11 + Prisma
-│       ├── src/
-│       │   ├── auth/          # JWT authentication
-│       │   ├── profile/       # Profile management
-│       │   ├── skills/        # Skills CRUD
-│       │   ├── projects/      # Projects CRUD
-│       │   ├── experience/    # Experience CRUD
-│       │   ├── education/     # Education CRUD
-│       │   ├── testimonials/  # Testimonials
-│       │   ├── contact/       # Contact messages
-│       │   ├── settings/      # Site settings
-│       │   ├── resume/        # PDF generation
-│       │   └── upload/        # Image upload
-│       ├── prisma/
-│       │   ├── schema.prisma  # Database schema
-│       │   └── seed.ts        # Seed script
-│       └── test/              # E2E tests
-├── docker-compose.yml
-├── .env.example
-└── README.md
-```
-
----
-
-## Features
-
-### Public Site
-- Responsive hero section with animated text
-- Projects gallery with filtering
-- Experience timeline
-- Education section
-- Testimonials carousel
-- Contact form with reCAPTCHA support
-- Multi-language support (EN/FA/DE)
-- RTL layout for Farsi
-- Dark/Light mode toggle
-- PWA support (installable)
-- SEO optimized (meta tags, sitemap, structured data)
-
-### Admin Dashboard
-- Secure JWT authentication
-- Profile management with multi-language tabs
-- Skills CRUD with drag-and-drop ordering
-- Projects CRUD with image upload
-- Experience & Education management
-- Testimonial approval workflow
-- Contact message inbox
-- Site settings (theme, SEO, footer)
-- Resume PDF generator (3 languages)
-- Data export (JSON backup)
-
----
-
-## API Endpoints
-
-### Public Endpoints
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/profile` | Get profile |
-| GET | `/api/skills` | Get all skills |
-| GET | `/api/projects` | Get published projects |
-| GET | `/api/projects/:id` | Get project by ID |
-| GET | `/api/experience` | Get experience |
-| GET | `/api/education` | Get education |
-| GET | `/api/testimonials` | Get approved testimonials |
-| POST | `/api/testimonials` | Submit testimonial |
-| POST | `/api/contact` | Send contact message |
-| GET | `/api/settings/:key` | Get setting |
-
-### Admin Endpoints (JWT Required)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/login` | Login |
-| POST | `/api/auth/refresh` | Refresh token |
-| GET | `/api/auth/profile` | Get current user |
-| PUT | `/api/profile` | Update profile |
-| POST | `/api/skills` | Create skill |
-| PUT | `/api/skills/:id` | Update skill |
-| DELETE | `/api/skills/:id` | Delete skill |
-| POST | `/api/projects` | Create project |
-| PUT | `/api/projects/:id` | Update project |
-| DELETE | `/api/projects/:id` | Delete project |
-| POST | `/api/upload/image` | Upload image |
-| POST | `/api/resume/generate` | Generate PDF |
-
-Full API documentation: http://localhost:3000/api/docs
-
----
-
-## Deployment
+## 🚀 Deployment
 
 ### Option 1: Vercel (Frontend) + Railway (Backend)
 
@@ -275,20 +309,19 @@ Full API documentation: http://localhost:3000/api/docs
 1. Push to GitHub
 2. Import repository in Vercel
 3. Set build command: `cd apps/frontend && pnpm install && pnpm build`
-4. Set output directory: `apps/frontend/dist/frontend/browser`
+4. Set output: `apps/frontend/dist/frontend/browser`
 
 **Backend (Railway):**
-1. Push to GitHub
-2. Create new project in Railway
-3. Add PostgreSQL database
-4. Set environment variables
-5. Deploy
+1. Create new project in Railway
+2. Add PostgreSQL database
+3. Set environment variables
+4. Deploy
 
 ### Option 2: Docker on VPS
 
 ```bash
 # Clone repository
-git clone <your-repo>
+git clone https://github.com/moeinparvizi/portfolio.git
 cd portfolio
 
 # Setup environment
@@ -300,33 +333,9 @@ docker-compose -f docker-compose.prod.yml up -d
 
 # Run migrations
 docker-compose exec backend npx prisma migrate deploy
-
-# Seed database
-docker-compose exec backend npx ts-node prisma/seed.ts
 ```
 
-### Option 3: Manual Deployment
-
-**Backend:**
-```bash
-cd apps/backend
-pnpm install --prod
-npx prisma generate
-npx prisma migrate deploy
-node dist/main.js
-```
-
-**Frontend:**
-```bash
-cd apps/frontend
-pnpm install
-pnpm build
-# Serve dist/frontend/browser with nginx or similar
-```
-
----
-
-## Environment Variables
+## 🔧 Environment Variables
 
 | Variable | Description | Default |
 |----------|-------------|---------|
@@ -338,11 +347,18 @@ pnpm build
 | `PORT` | Backend port | `3000` |
 | `CORS_ORIGINS` | Allowed origins | `http://localhost:4200` |
 | `UPLOAD_DIR` | Upload directory | `./uploads` |
-| `RECAPTCHA_SECRET` | reCAPTCHA secret key | - |
-| `RECAPTCHA_SITE_KEY` | reCAPTCHA site key | - |
+
+## 📝 License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+## 🙏 Acknowledgments
+
+- [Angular](https://angular.dev) - Frontend framework
+- [NestJS](https://nestjs.com) - Backend framework
+- [Prisma](https://prisma.io) - Database ORM
+- [Tailwind CSS](https://tailwindcss.com) - Utility classes
 
 ---
 
-## License
-
-MIT
+Built with ❤️ by [Moein Parvizi](https://github.com/moeinparvizi)
