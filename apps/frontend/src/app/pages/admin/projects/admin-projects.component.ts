@@ -216,7 +216,12 @@ export class AdminProjectsComponent implements OnInit {
 
   load() {
     this.api.getProjects().subscribe({
-      next: (p) => { this.projects = p; this.cdr.detectChanges(); },
+      next: (p) => {
+        this.projects = [];
+        this.cdr.detectChanges();
+        this.projects = p;
+        this.cdr.detectChanges();
+      },
       error: () => this.toast.error('Failed to load projects'),
     });
   }
@@ -286,9 +291,10 @@ export class AdminProjectsComponent implements OnInit {
     obs.subscribe({
       next: () => {
         this.saving = false;
+        const wasEditing = !!this.editingId;
         this.cancel();
         this.load();
-        this.toast.success(this.editingId ? 'Project updated!' : 'Project created!');
+        this.toast.success(wasEditing ? 'Project updated!' : 'Project created!');
       },
       error: (err) => {
         console.error('Error saving project:', err);
