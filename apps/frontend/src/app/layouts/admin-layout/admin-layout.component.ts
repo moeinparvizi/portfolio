@@ -190,6 +190,7 @@ import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme
     .main-content {
       flex: 1;
       margin-left: 260px;
+      overflow-y: auto;
 
       @media (max-width: 900px) {
         margin-left: 0;
