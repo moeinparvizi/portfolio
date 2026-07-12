@@ -117,6 +117,10 @@ export class ApiService {
     return this.http.put<void>(`${this.base}/testimonials/${id}/approve`, {});
   }
 
+  updateTestimonial(id: string, data: Partial<Testimonial>): Observable<Testimonial> {
+    return this.http.put<Testimonial>(`${this.base}/testimonials/${id}`, data);
+  }
+
   deleteTestimonial(id: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/testimonials/${id}`);
   }
