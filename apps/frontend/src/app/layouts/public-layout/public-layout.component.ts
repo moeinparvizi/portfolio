@@ -13,7 +13,15 @@ import { LanguageSwitcherComponent } from '../../shared/components/language-swit
       <div class="header-inner container">
         <a routerLink="/" class="logo">Portfolio</a>
 
-        <nav class="nav">
+        <!-- Mobile Menu Toggle -->
+        <button class="menu-toggle" (click)="menuOpen = !menuOpen" [class.active]="menuOpen">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <!-- Desktop Nav -->
+        <nav class="nav desktop-nav">
           <a routerLink="about" routerLinkActive="active">About</a>
           <a routerLink="skills" routerLinkActive="active">Skills</a>
           <a routerLink="projects" routerLinkActive="active">Projects</a>
@@ -27,6 +35,18 @@ import { LanguageSwitcherComponent } from '../../shared/components/language-swit
           <app-theme-toggle />
         </div>
       </div>
+
+      <!-- Mobile Nav -->
+      @if (menuOpen) {
+        <nav class="mobile-nav">
+          <a routerLink="about" routerLinkActive="active" (click)="menuOpen = false">About</a>
+          <a routerLink="skills" routerLinkActive="active" (click)="menuOpen = false">Skills</a>
+          <a routerLink="projects" routerLinkActive="active" (click)="menuOpen = false">Projects</a>
+          <a routerLink="experience" routerLinkActive="active" (click)="menuOpen = false">Experience</a>
+          <a routerLink="education" routerLinkActive="active" (click)="menuOpen = false">Education</a>
+          <a routerLink="contact" routerLinkActive="active" (click)="menuOpen = false">Contact</a>
+        </nav>
+      }
     </header>
 
     <main>
@@ -80,7 +100,8 @@ import { LanguageSwitcherComponent } from '../../shared/components/language-swit
       text-decoration: none;
     }
 
-    .nav {
+    /* Desktop Nav */
+    .desktop-nav {
       display: flex;
       gap: var(--space-sm);
 
@@ -92,6 +113,7 @@ import { LanguageSwitcherComponent } from '../../shared/components/language-swit
         font-weight: 500;
         text-decoration: none;
         transition: all var(--transition-fast);
+        white-space: nowrap;
 
         &:hover, &.active {
           color: var(--color-text);
@@ -99,8 +121,67 @@ import { LanguageSwitcherComponent } from '../../shared/components/language-swit
         }
       }
 
-      @media (max-width: 768px) {
+      @media (max-width: 900px) {
         display: none;
+      }
+    }
+
+    /* Mobile Menu Toggle */
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      padding: 8px;
+      background: none;
+      border: none;
+      cursor: pointer;
+
+      span {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background: var(--color-text);
+        transition: all var(--transition-fast);
+        border-radius: 2px;
+      }
+
+      &.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      &.active span:nth-child(2) {
+        opacity: 0;
+      }
+      &.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+      }
+
+      @media (max-width: 900px) {
+        display: flex;
+      }
+    }
+
+    /* Mobile Nav */
+    .mobile-nav {
+      display: flex;
+      flex-direction: column;
+      padding: var(--space-md);
+      background: var(--glass-bg);
+      backdrop-filter: blur(var(--glass-blur));
+      border-top: 1px solid var(--glass-border);
+
+      a {
+        padding: var(--space-md);
+        border-radius: var(--radius-md);
+        color: var(--color-text-secondary);
+        font-size: var(--text-base);
+        font-weight: 500;
+        text-decoration: none;
+        transition: all var(--transition-fast);
+
+        &:hover, &.active {
+          color: var(--color-text);
+          background: rgba(255, 255, 255, 0.1);
+        }
       }
     }
 
@@ -121,9 +202,10 @@ import { LanguageSwitcherComponent } from '../../shared/components/language-swit
       align-items: center;
       justify-content: space-between;
 
-      @media (max-width: 768px) {
+      @media (max-width: 600px) {
         flex-direction: column;
         gap: var(--space-md);
+        text-align: center;
       }
     }
 
@@ -147,4 +229,6 @@ import { LanguageSwitcherComponent } from '../../shared/components/language-swit
     }
   `],
 })
-export class PublicLayoutComponent {}
+export class PublicLayoutComponent {
+  menuOpen = false;
+}

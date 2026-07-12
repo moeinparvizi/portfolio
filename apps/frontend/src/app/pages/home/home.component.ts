@@ -108,34 +108,35 @@ import type { Profile, Project, Skill } from '../../core/models';
       @media (max-width: 768px) {
         flex-direction: column;
         text-align: center;
+        gap: var(--space-xl);
       }
     }
 
     .hero-text { flex: 1; }
 
     .hero-title {
-      font-size: var(--text-5xl);
+      font-size: clamp(1.75rem, 5vw, 3rem);
       font-weight: 700;
       line-height: 1.1;
       margin-bottom: var(--space-lg);
-
-      @media (max-width: 768px) {
-        font-size: var(--text-3xl);
-      }
     }
 
     .hero-subtitle {
-      font-size: var(--text-xl);
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
       color: var(--color-primary);
       font-weight: 500;
       margin-bottom: var(--space-md);
     }
 
     .hero-description {
-      font-size: var(--text-lg);
+      font-size: clamp(0.875rem, 2vw, 1.125rem);
       color: var(--color-text-secondary);
       margin-bottom: var(--space-xl);
       max-width: 500px;
+
+      @media (max-width: 768px) {
+        margin-inline: auto;
+      }
     }
 
     .hero-actions {
@@ -152,27 +153,22 @@ import type { Profile, Project, Skill } from '../../core/models';
       flex-shrink: 0;
 
       img {
-        width: 300px;
-        height: 300px;
+        width: clamp(150px, 30vw, 300px);
+        height: clamp(150px, 30vw, 300px);
         border-radius: var(--radius-xl);
         object-fit: cover;
         border: 3px solid var(--glass-border);
-
-        @media (max-width: 768px) {
-          width: 200px;
-          height: 200px;
-        }
       }
     }
 
     .section-title {
-      font-size: var(--text-3xl);
+      font-size: clamp(1.5rem, 4vw, 2rem);
       margin-bottom: var(--space-xl);
     }
 
     .projects-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
       gap: var(--space-lg);
     }
 

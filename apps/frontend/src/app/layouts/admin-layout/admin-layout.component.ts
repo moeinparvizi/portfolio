@@ -9,59 +9,62 @@ import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme
   standalone: true,
   imports: [CommonModule, RouterModule, ThemeToggleComponent],
   template: `
-    <div class="admin-layout">
+    <div class="admin-layout" [class.sidebar-open]="sidebarOpen">
+      <!-- Mobile Overlay -->
+      @if (sidebarOpen) {
+        <div class="sidebar-overlay" (click)="sidebarOpen = false"></div>
+      }
+
       <!-- Sidebar -->
-      <aside class="sidebar">
+      <aside class="sidebar" [class.open]="sidebarOpen">
         <div class="sidebar-header">
           <a routerLink="/admin" class="logo">Admin Panel</a>
+          <button class="close-btn" (click)="sidebarOpen = false">✕</button>
         </div>
 
         <nav class="sidebar-nav">
-          <a routerLink="/admin/dashboard" routerLinkActive="active">
+          <a routerLink="/admin/dashboard" routerLinkActive="active" (click)="sidebarOpen = false">
             <span class="icon">📊</span> Dashboard
           </a>
-          <a routerLink="/admin/profile" routerLinkActive="active">
+          <a routerLink="/admin/profile" routerLinkActive="active" (click)="sidebarOpen = false">
             <span class="icon">👤</span> Profile
           </a>
-          <a routerLink="/admin/skills" routerLinkActive="active">
+          <a routerLink="/admin/skills" routerLinkActive="active" (click)="sidebarOpen = false">
             <span class="icon">🛠️</span> Skills
           </a>
-          <a routerLink="/admin/projects" routerLinkActive="active">
+          <a routerLink="/admin/projects" routerLinkActive="active" (click)="sidebarOpen = false">
             <span class="icon">📁</span> Projects
           </a>
-          <a routerLink="/admin/experience" routerLinkActive="active">
+          <a routerLink="/admin/experience" routerLinkActive="active" (click)="sidebarOpen = false">
             <span class="icon">💼</span> Experience
           </a>
-          <a routerLink="/admin/education" routerLinkActive="active">
+          <a routerLink="/admin/education" routerLinkActive="active" (click)="sidebarOpen = false">
             <span class="icon">🎓</span> Education
           </a>
-          <a routerLink="/admin/testimonials" routerLinkActive="active">
+          <a routerLink="/admin/testimonials" routerLinkActive="active" (click)="sidebarOpen = false">
             <span class="icon">💬</span> Testimonials
           </a>
-          <a routerLink="/admin/contact" routerLinkActive="active">
+          <a routerLink="/admin/contact" routerLinkActive="active" (click)="sidebarOpen = false">
             <span class="icon">✉️</span> Messages
           </a>
-          <a routerLink="/admin/settings" routerLinkActive="active">
+          <a routerLink="/admin/settings" routerLinkActive="active" (click)="sidebarOpen = false">
             <span class="icon">⚙️</span> Settings
           </a>
-          <a routerLink="/admin/resume" routerLinkActive="active">
+          <a routerLink="/admin/resume" routerLinkActive="active" (click)="sidebarOpen = false">
             <span class="icon">📄</span> Resume
           </a>
         </nav>
 
         <div class="sidebar-footer">
-          <a routerLink="/" class="btn btn-ghost btn-sm">
-            ← Back to Site
-          </a>
-          <button class="btn btn-ghost btn-sm" (click)="logout()">
-            Logout
-          </button>
+          <a routerLink="/" class="btn btn-ghost btn-sm">← Back to Site</a>
+          <button class="btn btn-ghost btn-sm" (click)="logout()">Logout</button>
         </div>
       </aside>
 
       <!-- Main Content -->
       <main class="main-content">
         <header class="topbar">
+          <button class="menu-btn" (click)="sidebarOpen = !sidebarOpen">☰</button>
           <h2>Admin Dashboard</h2>
           <div class="topbar-actions">
             <app-theme-toggle />
@@ -80,6 +83,18 @@ import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme
       min-height: 100vh;
     }
 
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 90;
+
+      @media (max-width: 900px) {
+        display: block;
+      }
+    }
+
     .sidebar {
       width: 260px;
       background: var(--color-surface);
@@ -89,11 +104,37 @@ import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme
       position: fixed;
       height: 100vh;
       overflow-y: auto;
+      z-index: 100;
+
+      @media (max-width: 900px) {
+        transform: translateX(-100%);
+        transition: transform var(--transition-base);
+
+        &.open {
+          transform: translateX(0);
+        }
+      }
     }
 
     .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       padding: var(--space-lg);
       border-bottom: 1px solid var(--color-border);
+    }
+
+    .close-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: var(--text-lg);
+      cursor: pointer;
+      color: var(--color-text);
+
+      @media (max-width: 900px) {
+        display: block;
+      }
     }
 
     .logo {
@@ -118,6 +159,7 @@ import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme
         text-decoration: none;
         font-size: var(--text-sm);
         transition: all var(--transition-fast);
+        margin-bottom: 2px;
 
         &:hover {
           background: var(--color-surface-alt);
@@ -131,6 +173,8 @@ import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme
 
         .icon {
           font-size: var(--text-lg);
+          width: 24px;
+          text-align: center;
         }
       }
     }
@@ -146,35 +190,49 @@ import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme
     .main-content {
       flex: 1;
       margin-left: 260px;
+
+      @media (max-width: 900px) {
+        margin-left: 0;
+      }
     }
 
     .topbar {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      gap: var(--space-md);
       padding: var(--space-md) var(--space-xl);
       border-bottom: 1px solid var(--color-border);
       background: var(--color-surface);
+      position: sticky;
+      top: 0;
+      z-index: 50;
 
       h2 {
-        font-size: var(--text-xl);
+        font-size: var(--text-lg);
         margin: 0;
+        flex: 1;
+      }
+    }
+
+    .menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: var(--text-xl);
+      cursor: pointer;
+      color: var(--color-text);
+      padding: var(--space-sm);
+
+      @media (max-width: 900px) {
+        display: block;
       }
     }
 
     .content {
       padding: var(--space-xl);
-    }
 
-    @media (max-width: 768px) {
-      .sidebar {
-        width: 100%;
-        position: static;
-        height: auto;
-      }
-
-      .main-content {
-        margin-left: 0;
+      @media (max-width: 600px) {
+        padding: var(--space-md);
       }
     }
   `],
@@ -182,6 +240,8 @@ import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme
 export class AdminLayoutComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
+
+  sidebarOpen = false;
 
   logout() {
     this.auth.logout();
