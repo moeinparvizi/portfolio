@@ -80,7 +80,7 @@ import type { Skill } from '../../../core/models';
       }
 
       <!-- Skills List -->
-      <div class="skills-grid">
+      <div class="skills-grid mt-2">
         @for (skill of skills; track skill.id) {
           <app-glass-card>
             <div class="skill-card">
