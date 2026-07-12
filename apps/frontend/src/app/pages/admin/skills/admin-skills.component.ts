@@ -5,84 +5,71 @@ import { ApiService } from '../../../core/services/api.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { GlassCardComponent } from '../../../shared/components/glass-card/glass-card.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import type { Skill } from '../../../core/models';
 
 @Component({
   selector: 'app-admin-skills',
   standalone: true,
-  imports: [CommonModule, FormsModule, GlassCardComponent, ConfirmDialogComponent],
+  imports: [CommonModule, FormsModule, GlassCardComponent, ConfirmDialogComponent, ModalComponent],
   template: `
     <div class="admin-page">
       <div class="page-header">
         <h1>Skills Management</h1>
-        <button class="btn btn-primary" (click)="openNewForm()">
-          + Add New Skill
-        </button>
+        <button class="btn btn-primary" (click)="openNewForm()">+ Add New Skill</button>
       </div>
 
-      <!-- Edit Form -->
-      @if (showForm) {
-        <app-glass-card>
-          <div class="form-header">
-            <h3>{{ editingId ? 'Edit Skill' : 'New Skill' }}</h3>
-            <button class="btn btn-ghost btn-sm" (click)="cancel()">✕</button>
+      <!-- Edit Modal -->
+      <app-modal [open]="showForm" [title]="editingId ? 'Edit Skill' : 'New Skill'" (close)="cancel()">
+        <form (ngSubmit)="save()">
+          <div class="lang-tabs">
+            @for (lang of languages; track lang.code) {
+              <button type="button" class="tab" [class.active]="activeLang === lang.code" (click)="activeLang = lang.code">
+                {{ lang.label }}
+              </button>
+            }
           </div>
 
-          <form (ngSubmit)="save()">
-            <!-- Language Tabs -->
-            <div class="lang-tabs">
-              @for (lang of languages; track lang.code) {
-                <button type="button" class="tab" [class.active]="activeLang === lang.code" (click)="activeLang = lang.code">
-                  {{ lang.label }}
-                </button>
-              }
-            </div>
+          <div class="form-group required">
+            <label>Skill Name ({{ activeLang.toUpperCase() }}) <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="formData.name[activeLang]" [name]="'name_' + activeLang" placeholder="e.g., Angular, React, Node.js" required />
+          </div>
 
+          <div class="form-row">
             <div class="form-group">
-              <label>Skill Name ({{ activeLang.toUpperCase() }})</label>
-              <input type="text" [(ngModel)]="formData.name[activeLang]" [name]="'name_' + activeLang" placeholder="e.g., Angular, React, Node.js" required />
+              <label>Category</label>
+              <input type="text" [(ngModel)]="formData.category" name="category" placeholder="e.g., Frontend, Backend, DevOps" />
             </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label>Category</label>
-                <input type="text" [(ngModel)]="formData.category" name="category" placeholder="e.g., Frontend, Backend, DevOps" />
-              </div>
-              <div class="form-group">
-                <label>Proficiency Level</label>
-                <div class="level-selector">
-                  @for (level of [1,2,3,4,5]; track level) {
-                    <button type="button" class="level-btn" [class.active]="formData.level === level" (click)="formData.level = level">
-                      {{ level }}
-                    </button>
-                  }
-                </div>
+            <div class="form-group">
+              <label>Proficiency Level</label>
+              <div class="level-selector">
+                @for (level of [1,2,3,4,5]; track level) {
+                  <button type="button" class="level-btn" [class.active]="formData.level === level" (click)="formData.level = level">
+                    {{ level }}
+                  </button>
+                }
               </div>
             </div>
+          </div>
 
-            <div class="form-group">
-              <label>Icon URL (optional)</label>
-              <input type="text" [(ngModel)]="formData.icon" name="icon" placeholder="https://..." />
-            </div>
+          <div class="form-group">
+            <label>Icon URL (optional)</label>
+            <input type="text" [(ngModel)]="formData.icon" name="icon" placeholder="https://..." />
+          </div>
 
-            <div class="form-actions">
-              <button type="button" class="btn btn-ghost" (click)="cancel()">Cancel</button>
-              <button type="submit" class="btn btn-primary" [disabled]="saving">
-                {{ saving ? 'Saving...' : (editingId ? 'Update Skill' : 'Create Skill') }}
-              </button>
-            </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost" (click)="cancel()">Cancel</button>
+            <button type="submit" class="btn btn-primary" [disabled]="saving">
+              {{ saving ? 'Saving...' : (editingId ? 'Update Skill' : 'Create Skill') }}
+            </button>
+          </div>
+        </form>
+      </app-modal>
 
-            @if (error) {
-              <p class="error">{{ error }}</p>
-            }
-          </form>
-        </app-glass-card>
-      }
-
-      <!-- Skills List -->
-      <div class="skills-grid mt-2">
+      <!-- Skills Grid -->
+      <div class="skills-grid">
         @for (skill of skills; track skill.id) {
-          <app-glass-card>
+          <app-glass-card [hoverable]="true">
             <div class="skill-card">
               <div class="skill-header">
                 <h4>{{ skill.name['en'] || skill.name['fa'] || 'Untitled' }}</h4>
@@ -147,18 +134,6 @@ import type { Skill } from '../../../core/models';
       }
     }
 
-    .form-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--space-lg);
-
-      h3 {
-        margin: 0;
-        font-size: var(--text-xl);
-      }
-    }
-
     .lang-tabs {
       display: flex;
       gap: var(--space-sm);
@@ -173,8 +148,6 @@ import type { Skill } from '../../../core/models';
       color: var(--color-text-secondary);
       cursor: pointer;
       font-family: var(--font-body);
-      transition: all var(--transition-fast);
-
       &.active {
         background: var(--color-primary);
         color: white;
@@ -184,15 +157,12 @@ import type { Skill } from '../../../core/models';
 
     .form-group {
       margin-bottom: var(--space-lg);
-
       label {
         display: block;
         font-weight: 500;
         margin-bottom: var(--space-sm);
-        color: var(--color-text);
       }
-
-      input {
+      input, textarea {
         width: 100%;
         padding: var(--space-md);
         border: 1px solid var(--color-border);
@@ -200,24 +170,20 @@ import type { Skill } from '../../../core/models';
         background: var(--color-surface);
         color: var(--color-text);
         font-family: var(--font-body);
-        transition: border-color var(--transition-fast);
-
         &:focus {
           outline: none;
           border-color: var(--color-primary);
         }
-
-        &::placeholder {
-          color: var(--color-text-muted);
-        }
       }
     }
+
+    .required label { color: var(--color-text); }
+    .req { color: var(--color-error); margin-left: 2px; }
 
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: var(--space-lg);
-
       @media (max-width: 600px) {
         grid-template-columns: 1fr;
       }
@@ -256,6 +222,8 @@ import type { Skill } from '../../../core/models';
       gap: var(--space-sm);
       justify-content: flex-end;
       margin-top: var(--space-lg);
+      padding-top: var(--space-lg);
+      border-top: 1px solid var(--color-border);
     }
 
     .skills-grid {
@@ -274,11 +242,7 @@ import type { Skill } from '../../../core/models';
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-
-      h4 {
-        margin: 0;
-        font-size: var(--text-lg);
-      }
+      h4 { margin: 0; }
     }
 
     .skill-actions {
@@ -290,7 +254,7 @@ import type { Skill } from '../../../core/models';
       display: inline-block;
       padding: 2px 8px;
       border-radius: var(--radius-sm);
-      background: rgba(37, 99, 235, 0.1);
+      background: rgba(99, 102, 241, 0.1);
       color: var(--color-primary);
       font-size: var(--text-xs);
       font-weight: 500;
@@ -307,7 +271,6 @@ import type { Skill } from '../../../core/models';
       height: 8px;
       border-radius: 50%;
       background: var(--color-border);
-
       &.filled {
         background: var(--color-primary);
       }
@@ -337,16 +300,9 @@ import type { Skill } from '../../../core/models';
 
     .btn-danger {
       color: var(--color-error);
-
       &:hover {
         background: rgba(239, 68, 68, 0.1);
       }
-    }
-
-    .error {
-      color: var(--color-error);
-      margin-top: var(--space-md);
-      text-align: center;
     }
   `],
 })
@@ -379,12 +335,12 @@ export class AdminSkillsComponent implements OnInit {
   load() {
     this.api.getSkills().subscribe({
       next: (s) => {
+        this.skills = [];
+        this.cdr.detectChanges();
         this.skills = s;
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Error loading skills:', err);
-      },
+      error: () => this.toast.error('Failed to load skills'),
     });
   }
 
@@ -423,7 +379,7 @@ export class AdminSkillsComponent implements OnInit {
   save() {
     if (!this.formData.name.en && !this.formData.name.fa && !this.formData.name.de) {
       this.error = 'Please enter at least one skill name';
-      this.toast.warning('Please enter at least one skill name');
+      this.toast.warning('Please enter a skill name');
       return;
     }
 
@@ -438,6 +394,7 @@ export class AdminSkillsComponent implements OnInit {
       sortOrder: this.formData.sortOrder,
     };
 
+    const wasEditing = !!this.editingId;
     const obs = this.editingId
       ? this.api.updateSkill(this.editingId, data)
       : this.api.createSkill(data);
@@ -447,7 +404,7 @@ export class AdminSkillsComponent implements OnInit {
         this.saving = false;
         this.cancel();
         this.load();
-        this.toast.success(this.editingId ? 'Skill updated!' : 'Skill created!');
+        this.toast.success(wasEditing ? 'Skill updated!' : 'Skill created!');
       },
       error: (err) => {
         console.error('Error saving skill:', err);
