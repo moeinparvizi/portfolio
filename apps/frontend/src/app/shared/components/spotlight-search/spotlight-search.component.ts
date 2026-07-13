@@ -41,7 +41,7 @@ import type { BlogPost } from '../../../core/models';
                   {{ results.length }} result{{ results.length > 1 ? 's' : '' }}
                 </div>
                 @for (post of results; track post.id) {
-                  <a [routerLink]="getLink('/blog/' + post.slug)" (click)="close.emit()" class="result-item">
+                  <a [routerLink]="mode === 'admin' ? '/admin/blog/' + post.id : getLink('/blog/' + post.slug)" (click)="close.emit()" class="result-item">
                     @if (post.coverImage) {
                       <img [src]="post.coverImage" class="result-image" />
                     } @else {
@@ -292,6 +292,9 @@ export class SpotlightSearchComponent {
   private searchTimeout: any;
 
   getLink(path: string): string {
+    if (this.mode === 'admin') {
+      return path;
+    }
     const locale = this.localeService.getLocale();
     return `/${locale}${path}`;
   }
