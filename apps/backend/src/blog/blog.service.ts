@@ -24,7 +24,7 @@ export class BlogService {
 
     return this.prisma.blogPost.findMany({
       where,
-      include: { category: true, comments: { where: { approved: true } } },
+      include: { category: true, comments: true },
       orderBy,
     });
   }
