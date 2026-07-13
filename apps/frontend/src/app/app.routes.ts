@@ -26,6 +26,7 @@ export const routes: Routes = [
       { path: 'settings', loadComponent: () => import('./pages/admin/settings/admin-settings.component').then(m => m.AdminSettingsComponent) },
       { path: 'resume', loadComponent: () => import('./pages/admin/resume/admin-resume.component').then(m => m.AdminResumeComponent) },
       { path: 'blog', loadComponent: () => import('./pages/admin/blog/admin-blog.component').then(m => m.AdminBlogComponent) },
+      { path: 'blog/:id', loadComponent: () => import('./pages/admin/blog-detail/admin-blog-detail.component').then(m => m.AdminBlogDetailComponent) },
       { path: 'blog/categories', loadComponent: () => import('./pages/admin/blog-categories/admin-blog-categories.component').then(m => m.AdminBlogCategoriesComponent) },
       { path: 'blog/comments', loadComponent: () => import('./pages/admin/blog-comments/admin-blog-comments.component').then(m => m.AdminBlogCommentsComponent) },
     ],

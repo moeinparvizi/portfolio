@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/services/api.service';
 import { ToastService } from '../../../core/services/toast.service';
@@ -12,7 +13,7 @@ import type { BlogPost, BlogCategory } from '../../../core/models';
 @Component({
   selector: 'app-admin-blog',
   standalone: true,
-  imports: [CommonModule, FormsModule, GlassCardComponent, ConfirmDialogComponent, ModalComponent, SpotlightSearchComponent],
+  imports: [CommonModule, RouterModule, FormsModule, GlassCardComponent, ConfirmDialogComponent, ModalComponent, SpotlightSearchComponent],
   template: `
     <div class="admin-page">
       <div class="page-header">
@@ -146,6 +147,7 @@ import type { BlogPost, BlogCategory } from '../../../core/models';
                 <span>📅 {{ formatDate(post.createdAt) }}</span>
               </div>
               <div class="post-actions">
+                <a [routerLink]="['/admin/blog', post.id]" class="btn btn-ghost btn-sm">👁 View</a>
                 <button class="btn btn-ghost btn-sm" (click)="edit(post)">Edit</button>
                 <button class="btn btn-ghost btn-sm btn-danger" (click)="confirmDelete(post.id)">Delete</button>
               </div>
