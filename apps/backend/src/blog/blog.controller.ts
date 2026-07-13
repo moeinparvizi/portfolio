@@ -34,14 +34,6 @@ export class BlogController {
     return this.blogService.findBySlug(slug);
   }
 
-  @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get post by ID (admin)' })
-  findOne(@Param('id') id: string) {
-    return this.blogService.findOne(id);
-  }
-
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -64,5 +56,14 @@ export class BlogController {
   @ApiOperation({ summary: 'Delete blog post (admin)' })
   remove(@Param('id') id: string) {
     return this.blogService.remove(id);
+  }
+
+  // This route must be LAST to avoid matching 'categories', 'search', etc.
+  @Get('get/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get post by ID (admin)' })
+  findOne(@Param('id') id: string) {
+    return this.blogService.findOne(id);
   }
 }

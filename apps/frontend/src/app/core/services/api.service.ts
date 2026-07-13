@@ -174,7 +174,7 @@ export class ApiService {
   }
 
   getBlogPost(id: string): Observable<BlogPost> {
-    return this.http.get<BlogPost>(`${this.base}/blog/${id}`);
+    return this.http.get<BlogPost>(`${this.base}/blog/get/${id}`);
   }
 
   getBlogPostBySlug(slug: string): Observable<BlogPost> {
