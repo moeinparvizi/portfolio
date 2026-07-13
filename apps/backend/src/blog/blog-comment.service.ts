@@ -41,6 +41,7 @@ export class BlogCommentService {
     const parent = await this.prisma.blogComment.findUnique({ where: { id: parentId } });
     if (!parent) throw new NotFoundException('Parent comment not found');
 
+    // Admin replies are auto-approved
     return this.prisma.blogComment.create({
       data: {
         postId: parent.postId,
@@ -48,7 +49,7 @@ export class BlogCommentService {
         name: data.name,
         email: data.email,
         content: data.content,
-        approved: false,
+        approved: true,
       },
     });
   }

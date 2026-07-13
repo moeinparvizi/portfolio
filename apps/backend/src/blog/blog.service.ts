@@ -24,7 +24,14 @@ export class BlogService {
 
     return this.prisma.blogPost.findMany({
       where,
-      include: { category: true, comments: true },
+      include: {
+        category: true,
+        comments: {
+          include: {
+            replies: true,
+          },
+        },
+      },
       orderBy,
     });
   }
@@ -32,7 +39,19 @@ export class BlogService {
   async findBySlug(slug: string) {
     const post = await this.prisma.blogPost.findUnique({
       where: { slug },
-      include: { category: true, comments: { where: { approved: true } } },
+      include: {
+        category: true,
+        comments: {
+          where: { parentId: null, approved: true },
+          include: {
+            replies: {
+              where: { approved: true },
+              orderBy: { createdAt: 'asc' },
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+        },
+      },
     });
     if (!post) throw new NotFoundException('Post not found');
 
