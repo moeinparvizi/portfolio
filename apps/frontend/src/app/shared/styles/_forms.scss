@@ -1,0 +1,203 @@
+// ─── Form Elements - Galaxy Theme ──────────────────────
+
+// Galaxy-themed select dropdown
+.galaxy-select {
+  width: 100%;
+  padding: var(--space-md) var(--space-lg);
+  padding-right: 40px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394A3B8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    border-color: var(--color-primary);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  }
+
+  option {
+    background: var(--color-surface);
+    color: var(--color-text);
+    padding: var(--space-sm);
+  }
+}
+
+// Galaxy-themed toggle switch
+.galaxy-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  cursor: pointer;
+
+  input {
+    display: none;
+  }
+
+  .toggle-track {
+    width: 52px;
+    height: 28px;
+    background: var(--color-border);
+    border-radius: 14px;
+    position: relative;
+    transition: all var(--transition-base);
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      background: white;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: all var(--transition-base);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  .toggle-label {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    transition: color var(--transition-fast);
+  }
+
+  input:checked + .toggle-track {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+
+    &::after {
+      transform: translateX(24px);
+    }
+  }
+
+  input:checked ~ .toggle-label {
+    color: var(--color-text);
+  }
+
+  &:hover .toggle-track {
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+  }
+}
+
+// Galaxy-themed checkbox
+.galaxy-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+
+  input {
+    display: none;
+  }
+
+  .checkbox-box {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    position: relative;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 2px;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg) scale(0);
+      transition: transform var(--transition-fast);
+    }
+  }
+
+  .checkbox-label {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+
+  input:checked + .checkbox-box {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    border-color: var(--color-primary);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+
+    &::after {
+      transform: rotate(45deg) scale(1);
+    }
+  }
+
+  input:checked ~ .checkbox-label {
+    color: var(--color-text);
+  }
+
+  &:hover .checkbox-box {
+    border-color: var(--color-primary);
+  }
+}
+
+// Galaxy-themed input
+.galaxy-input {
+  width: 100%;
+  padding: var(--space-md) var(--space-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  transition: all var(--transition-fast);
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  &:hover {
+    border-color: var(--color-primary);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  }
+}
+
+// Galaxy-themed textarea
+.galaxy-textarea {
+  @extend .galaxy-input;
+  min-height: 100px;
+  resize: vertical;
+}
+
+// Form group with label
+.galaxy-form-group {
+  margin-bottom: var(--space-lg);
+
+  label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: var(--space-sm);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+  }
+
+  .required-mark {
+    color: var(--color-error);
+    margin-left: 2px;
+  }
+}

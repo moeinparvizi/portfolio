@@ -84,7 +84,7 @@ import type { SiteSettings } from '../../../core/models';
 
         <div class="form-group">
           <label>Default Language</label>
-          <select [(ngModel)]="generalData.defaultLanguage">
+          <select class="galaxy-select" [(ngModel)]="generalData.defaultLanguage">
             <option value="en">English</option>
             <option value="fa">فارسی (Farsi)</option>
             <option value="de">Deutsch (German)</option>
@@ -93,19 +93,19 @@ import type { SiteSettings } from '../../../core/models';
 
         <div class="form-group">
           <label>Maintenance Mode</label>
-          <label class="toggle">
+          <label class="galaxy-toggle">
             <input type="checkbox" [(ngModel)]="generalData.maintenanceMode" />
-            <span class="toggle-slider"></span>
-            <span>{{ generalData.maintenanceMode ? 'Enabled' : 'Disabled' }}</span>
+            <span class="toggle-track"></span>
+            <span class="toggle-label">{{ generalData.maintenanceMode ? 'Enabled' : 'Disabled' }}</span>
           </label>
         </div>
 
         <div class="form-group">
           <label>Analytics Enabled</label>
-          <label class="toggle">
+          <label class="galaxy-toggle">
             <input type="checkbox" [(ngModel)]="generalData.analyticsEnabled" />
-            <span class="toggle-slider"></span>
-            <span>{{ generalData.analyticsEnabled ? 'Enabled' : 'Disabled' }}</span>
+            <span class="toggle-track"></span>
+            <span class="toggle-label">{{ generalData.analyticsEnabled ? 'Enabled' : 'Disabled' }}</span>
           </label>
         </div>
 

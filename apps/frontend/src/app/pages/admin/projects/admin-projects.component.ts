@@ -70,7 +70,7 @@ import type { Project } from '../../../core/models';
           <div class="form-row">
             <div class="form-group">
               <label>Status</label>
-              <select [(ngModel)]="formData.status" name="status">
+              <select class="galaxy-select" [(ngModel)]="formData.status" name="status">
                 <option value="draft">Draft</option>
                 <option value="published">Published</option>
               </select>
@@ -78,13 +78,15 @@ import type { Project } from '../../../core/models';
             <div class="form-group">
               <label>Options</label>
               <div class="checkbox-group">
-                <label class="checkbox">
+                <label class="galaxy-checkbox">
                   <input type="checkbox" [(ngModel)]="formData.featured" name="featured" />
-                  <span>Featured</span>
+                  <span class="checkbox-box"></span>
+                  <span class="checkbox-label">Featured</span>
                 </label>
-                <label class="checkbox">
+                <label class="galaxy-checkbox">
                   <input type="checkbox" [(ngModel)]="formData.includeInResume" name="resume" />
-                  <span>Include in Resume</span>
+                  <span class="checkbox-box"></span>
+                  <span class="checkbox-label">Include in Resume</span>
                 </label>
               </div>
             </div>

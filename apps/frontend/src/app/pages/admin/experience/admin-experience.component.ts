@@ -59,18 +59,20 @@ import type { Experience } from '../../../core/models';
           <div class="form-row">
             <div class="form-group">
               <label>Location</label>
-              <input type="text" [(ngModel)]="formData.location" name="location" placeholder="e.g., Remote, Tehran" />
+              <input type="text" [(ngModel)]="formData.location" name="location" placeholder="e.g., Remote, Tehran" class="galaxy-input" />
             </div>
             <div class="form-group">
               <label>Options</label>
               <div class="checkbox-group">
-                <label class="checkbox">
+                <label class="galaxy-checkbox">
                   <input type="checkbox" [(ngModel)]="formData.isCurrent" name="isCurrent" />
-                  <span>Currently working here</span>
+                  <span class="checkbox-box"></span>
+                  <span class="checkbox-label">Currently working here</span>
                 </label>
-                <label class="checkbox">
+                <label class="galaxy-checkbox">
                   <input type="checkbox" [(ngModel)]="formData.includeInResume" name="resume" />
-                  <span>Include in Resume</span>
+                  <span class="checkbox-box"></span>
+                  <span class="checkbox-label">Include in Resume</span>
                 </label>
               </div>
             </div>

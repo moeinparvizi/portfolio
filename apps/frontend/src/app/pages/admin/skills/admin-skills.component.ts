@@ -54,7 +54,7 @@ import type { Skill } from '../../../core/models';
               <label>Proficiency Level</label>
               <div class="level-selector">
                 @for (level of [1,2,3,4,5]; track level) {
-                  <button type="button" class="level-btn" [class.active]="formData.level === level" (click)="formData.level = level">
+                  <button type="button" class="galaxy-level-btn" [class.active]="formData.level === level" (click)="formData.level = level">
                     {{ level }}
                   </button>
                 }
@@ -64,7 +64,7 @@ import type { Skill } from '../../../core/models';
 
           <div class="form-group">
             <label>Icon URL (optional)</label>
-            <input type="text" [(ngModel)]="formData.icon" name="icon" placeholder="https://..." />
+            <input type="text" [(ngModel)]="formData.icon" name="icon" placeholder="https://..." class="galaxy-input" />
           </div>
 
           <div class="form-actions">
@@ -204,26 +204,30 @@ import type { Skill } from '../../../core/models';
       gap: var(--space-sm);
     }
 
-    .level-btn {
-      width: 40px;
-      height: 40px;
-      border: 1px solid var(--color-border);
+    .galaxy-level-btn {
+      width: 44px;
+      height: 44px;
+      border: 2px solid var(--color-border);
       border-radius: var(--radius-md);
       background: transparent;
       color: var(--color-text-secondary);
       cursor: pointer;
       font-size: var(--text-lg);
+      font-weight: 600;
       transition: all var(--transition-fast);
 
       &:hover {
         border-color: var(--color-primary);
         color: var(--color-primary);
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
       }
 
       &.active {
-        background: var(--color-primary);
+        background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
         color: white;
-        border-color: var(--color-primary);
+        border-color: transparent;
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+        transform: scale(1.05);
       }
     }
 

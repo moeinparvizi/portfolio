@@ -63,9 +63,10 @@ import type { Education } from '../../../core/models';
           </div>
 
           <div class="form-group">
-            <label>
+            <label class="galaxy-checkbox">
               <input type="checkbox" [(ngModel)]="formData.includeInResume" name="resume" />
-              Include in Resume
+              <span class="checkbox-box"></span>
+              <span class="checkbox-label">Include in Resume</span>
             </label>
           </div>
 
