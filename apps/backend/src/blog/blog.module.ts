@@ -8,7 +8,7 @@ import { BlogCommentService } from './blog-comment.service';
 import { BlogCommentManageController } from './blog-comment-manage.controller';
 
 @Module({
-  controllers: [BlogController, BlogCategoryController, BlogCommentController, BlogCommentManageController],
+  controllers: [BlogCategoryController, BlogCommentController, BlogCommentManageController, BlogController],
   providers: [BlogService, BlogCategoryService, BlogCommentService],
   exports: [BlogService],
 })
