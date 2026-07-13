@@ -71,26 +71,35 @@ import type { BlogPost, BlogComment } from '../../core/models';
 
             <!-- Comment Form -->
             <app-glass-card>
-              <h3>Leave a Comment</h3>
-              <form (ngSubmit)="submitComment()" class="comment-form">
-                <div class="form-row">
-                  <div class="form-group">
-                    <label>Name <span class="req">*</span></label>
-                    <input type="text" [(ngModel)]="commentForm.name" name="name" required class="galaxy-input" />
+              @if (commentSubmitted) {
+                <div class="comment-success">
+                  <span class="success-icon">✅</span>
+                  <h3>Thank you!</h3>
+                  <p>Your comment has been submitted and is waiting for approval. It will appear here once approved by the admin.</p>
+                  <button class="btn btn-ghost" (click)="resetCommentForm()">Submit Another Comment</button>
+                </div>
+              } @else {
+                <h3>Leave a Comment</h3>
+                <form (ngSubmit)="submitComment()" class="comment-form">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Name <span class="req">*</span></label>
+                      <input type="text" [(ngModel)]="commentForm.name" name="name" required class="galaxy-input" />
+                    </div>
+                    <div class="form-group">
+                      <label>Email <span class="req">*</span></label>
+                      <input type="email" [(ngModel)]="commentForm.email" name="email" required class="galaxy-input" />
+                    </div>
                   </div>
                   <div class="form-group">
-                    <label>Email <span class="req">*</span></label>
-                    <input type="email" [(ngModel)]="commentForm.email" name="email" required class="galaxy-input" />
+                    <label>Comment <span class="req">*</span></label>
+                    <textarea [(ngModel)]="commentForm.content" name="content" rows="4" required class="galaxy-textarea"></textarea>
                   </div>
-                </div>
-                <div class="form-group">
-                  <label>Comment <span class="req">*</span></label>
-                  <textarea [(ngModel)]="commentForm.content" name="content" rows="4" required class="galaxy-textarea"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary" [disabled]="submitting">
-                  {{ submitting ? 'Submitting...' : 'Submit Comment' }}
-                </button>
-              </form>
+                  <button type="submit" class="btn btn-primary" [disabled]="submitting">
+                    {{ submitting ? 'Submitting...' : 'Submit Comment' }}
+                  </button>
+                </form>
+              }
             </app-glass-card>
           </div>
         }
@@ -189,6 +198,27 @@ import type { BlogPost, BlogComment } from '../../core/models';
       margin: 0;
     }
 
+    .comment-success {
+      text-align: center;
+      padding: var(--space-xl);
+
+      .success-icon {
+        font-size: 3rem;
+        display: block;
+        margin-bottom: var(--space-md);
+      }
+
+      h3 {
+        margin: 0 0 var(--space-sm);
+        color: var(--color-success);
+      }
+
+      p {
+        color: var(--color-text-secondary);
+        margin-bottom: var(--space-lg);
+      }
+    }
+
     .comment-form {
       h3 { margin-bottom: var(--space-lg); }
     }
@@ -217,6 +247,7 @@ export class BlogDetailComponent implements OnInit {
 
   post: BlogPost | null = null;
   submitting = false;
+  commentSubmitted = false;
   commentForm = { name: '', email: '', content: '' };
 
   getLink(path: string): string {
@@ -248,8 +279,7 @@ export class BlogDetailComponent implements OnInit {
     this.api.createBlogComment(this.post.id, this.commentForm).subscribe({
       next: () => {
         this.submitting = false;
-        this.commentForm = { name: '', email: '', content: '' };
-        this.toast.success('Comment submitted! It will appear after approval.');
+        this.commentSubmitted = true;
         this.cdr.detectChanges();
       },
       error: () => {
@@ -258,6 +288,11 @@ export class BlogDetailComponent implements OnInit {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  resetCommentForm() {
+    this.commentSubmitted = false;
+    this.commentForm = { name: '', email: '', content: '' };
   }
 
   formatDate(date: string): string {
