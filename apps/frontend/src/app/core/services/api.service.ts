@@ -164,8 +164,13 @@ export class ApiService {
   }
 
   // Blog Posts
-  getBlogPosts(): Observable<BlogPost[]> {
-    return this.http.get<BlogPost[]>(`${this.base}/blog`);
+  getBlogPosts(status?: string, category?: string, sort?: string): Observable<BlogPost[]> {
+    let params = new URLSearchParams();
+    if (status) params.append('status', status);
+    if (category) params.append('category', category);
+    if (sort) params.append('sort', sort);
+    const query = params.toString();
+    return this.http.get<BlogPost[]>(`${this.base}/blog${query ? '?' + query : ''}`);
   }
 
   getBlogPost(id: string): Observable<BlogPost> {
@@ -188,8 +193,11 @@ export class ApiService {
     return this.http.delete<void>(`${this.base}/blog/${id}`);
   }
 
-  searchBlog(query: string): Observable<BlogPost[]> {
-    return this.http.get<BlogPost[]>(`${this.base}/blog/search?q=${query}`);
+  searchBlog(query: string, status?: string): Observable<BlogPost[]> {
+    let params = new URLSearchParams();
+    params.append('q', query);
+    if (status) params.append('status', status);
+    return this.http.get<BlogPost[]>(`${this.base}/blog/search?${params.toString()}`);
   }
 
   // Blog Categories

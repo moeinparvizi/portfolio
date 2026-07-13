@@ -17,9 +17,16 @@ import type { BlogPost, BlogCategory } from '../../core/models';
       <div class="container">
         <div class="blog-header">
           <h1>Blog</h1>
-          <div class="search-box">
-            <input type="text" [(ngModel)]="searchQuery" placeholder="Search posts..." (keyup.enter)="search()" class="galaxy-input" />
-            <button class="btn btn-primary btn-sm" (click)="search()">Search</button>
+          <div class="header-actions">
+            <div class="search-box">
+              <input type="text" [(ngModel)]="searchQuery" placeholder="Search posts..." (keyup.enter)="search()" class="galaxy-input" />
+              <button class="btn btn-primary btn-sm" (click)="search()">🔍</button>
+            </div>
+            <select class="galaxy-select" [(ngModel)]="sortBy" (change)="loadPosts()">
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="views">Popular</option>
+            </select>
           </div>
         </div>
 
@@ -66,7 +73,7 @@ import type { BlogPost, BlogCategory } from '../../core/models';
             </app-glass-card>
           } @empty {
             <div class="empty-state">
-              <p>No blog posts yet.</p>
+              <p>No blog posts found.</p>
             </div>
           }
         </div>
@@ -85,13 +92,17 @@ import type { BlogPost, BlogCategory } from '../../core/models';
       h1 { margin: 0; }
     }
 
+    .header-actions {
+      display: flex;
+      gap: var(--space-md);
+      align-items: center;
+    }
+
     .search-box {
       display: flex;
       gap: var(--space-sm);
 
-      input {
-        width: 250px;
-      }
+      input { width: 200px; }
     }
 
     .categories {
@@ -154,10 +165,7 @@ import type { BlogPost, BlogCategory } from '../../core/models';
       font-weight: 500;
     }
 
-    h3 {
-      margin: 0;
-      font-size: var(--text-lg);
-    }
+    h3 { margin: 0; font-size: var(--text-lg); }
 
     .post-excerpt {
       font-size: var(--text-sm);
@@ -203,12 +211,14 @@ export class BlogComponent implements OnInit {
   categories: BlogCategory[] = [];
   activeCategory = '';
   searchQuery = '';
+  sortBy = 'newest';
 
   get filteredPosts(): BlogPost[] {
+    let filtered = this.posts;
     if (this.activeCategory) {
-      return this.posts.filter(p => p.categoryId === this.activeCategory);
+      filtered = filtered.filter(p => p.categoryId === this.activeCategory);
     }
-    return this.posts;
+    return filtered;
   }
 
   getLink(path: string): string {
@@ -222,7 +232,7 @@ export class BlogComponent implements OnInit {
   }
 
   loadPosts() {
-    this.api.getBlogPosts().subscribe({
+    this.api.getBlogPosts('published', this.activeCategory, this.sortBy).subscribe({
       next: (p) => {
         this.posts = p;
         this.cdr.detectChanges();
@@ -241,11 +251,12 @@ export class BlogComponent implements OnInit {
 
   filterByCategory(categoryId: string) {
     this.activeCategory = categoryId;
+    this.loadPosts();
   }
 
   search() {
     if (this.searchQuery.trim()) {
-      this.api.searchBlog(this.searchQuery).subscribe({
+      this.api.searchBlog(this.searchQuery, 'published').subscribe({
         next: (p) => {
           this.posts = p;
           this.cdr.detectChanges();

@@ -11,18 +11,20 @@ export class BlogController {
 
   @Get()
   @Public()
-  @ApiOperation({ summary: 'Get all blog posts' })
-  findAll(@Query('published') published?: string) {
-    // Return all posts by default (admin needs to see drafts too)
-    // Use ?published=true to get only published posts
-    return this.blogService.findAll(published === 'true');
+  @ApiOperation({ summary: 'Get all blog posts with filters' })
+  findAll(
+    @Query('status') status?: string,
+    @Query('category') category?: string,
+    @Query('sort') sort?: string,
+  ) {
+    return this.blogService.findAll(status, category, sort);
   }
 
   @Get('search')
   @Public()
   @ApiOperation({ summary: 'Search blog posts' })
-  search(@Query('q') query: string) {
-    return this.blogService.search(query || '');
+  search(@Query('q') query: string, @Query('status') status?: string) {
+    return this.blogService.search(query || '', status);
   }
 
   @Get('slug/:slug')

@@ -6,14 +6,26 @@ import { Prisma } from '@prisma/client';
 export class BlogService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(publishedOnly = false) {
-    const where: Prisma.BlogPostWhereInput = publishedOnly
-      ? { status: 'published' }
-      : {};
+  async findAll(status?: string, categoryId?: string, sort?: string) {
+    const where: Prisma.BlogPostWhereInput = {};
+
+    if (status && status !== 'all') {
+      where.status = status;
+    }
+
+    if (categoryId) {
+      where.categoryId = categoryId;
+    }
+
+    let orderBy: Prisma.BlogPostOrderByWithRelationInput = { createdAt: 'desc' };
+    if (sort === 'oldest') orderBy = { createdAt: 'asc' };
+    if (sort === 'views') orderBy = { views: 'desc' };
+    if (sort === 'title') orderBy = { title: 'asc' };
+
     return this.prisma.blogPost.findMany({
       where,
       include: { category: true, comments: { where: { approved: true } } },
-      orderBy: { createdAt: 'desc' },
+      orderBy,
     });
   }
 
@@ -24,7 +36,6 @@ export class BlogService {
     });
     if (!post) throw new NotFoundException('Post not found');
 
-    // Increment views
     await this.prisma.blogPost.update({
       where: { id: post.id },
       data: { views: { increment: 1 } },
@@ -43,9 +54,7 @@ export class BlogService {
   }
 
   async create(data: any) {
-    // Generate slug from title
     const slug = this.generateSlug(data.title?.en || '');
-    // Handle empty categoryId - set to null if empty
     const categoryId = data.categoryId || null;
     return this.prisma.blogPost.create({
       data: { ...data, slug, categoryId },
@@ -54,7 +63,6 @@ export class BlogService {
 
   async update(id: string, data: any) {
     await this.findOne(id);
-    // Handle empty categoryId - set to null if empty
     const categoryId = data.categoryId || null;
     return this.prisma.blogPost.update({
       where: { id },
@@ -67,20 +75,17 @@ export class BlogService {
     return this.prisma.blogPost.delete({ where: { id } });
   }
 
-  async findByCategory(categoryId: string) {
-    return this.prisma.blogPost.findMany({
-      where: { categoryId, status: 'published' },
-      include: { category: true },
-      orderBy: { createdAt: 'desc' },
-    });
-  }
+  async search(query: string, status?: string) {
+    const where: Prisma.BlogPostWhereInput = {
+      tags: { has: query },
+    };
 
-  async search(query: string) {
+    if (status && status !== 'all') {
+      where.status = status;
+    }
+
     return this.prisma.blogPost.findMany({
-      where: {
-        status: 'published',
-        tags: { has: query },
-      },
+      where,
       include: { category: true },
       orderBy: { createdAt: 'desc' },
     });

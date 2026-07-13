@@ -19,6 +19,37 @@ import type { BlogPost, BlogCategory } from '../../../core/models';
         <button class="btn btn-primary" (click)="openNewForm()">+ New Post</button>
       </div>
 
+      <!-- Filters -->
+      <div class="filters">
+        <div class="filter-group">
+          <label>Status:</label>
+          <select class="galaxy-select" [(ngModel)]="filterStatus" (change)="loadPosts()">
+            <option value="all">All</option>
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Sort:</label>
+          <select class="galaxy-select" [(ngModel)]="sortBy" (change)="loadPosts()">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="views">Most Views</option>
+          </select>
+        </div>
+        <div class="filter-group search-box">
+          <input type="text" [(ngModel)]="searchQuery" placeholder="Search posts..." (keyup.enter)="search()" class="galaxy-input" />
+          <button class="btn btn-ghost btn-sm" (click)="search()">🔍</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <span class="stat">{{ posts.length }} Total</span>
+        <span class="stat draft">{{ draftCount }} Draft</span>
+        <span class="stat published">{{ publishedCount }} Published</span>
+      </div>
+
       <!-- Edit Modal -->
       <app-modal [open]="showForm" [title]="editingId ? 'Edit Post' : 'New Post'" (close)="cancel()">
         <form (ngSubmit)="save()">
@@ -112,9 +143,9 @@ import type { BlogPost, BlogCategory } from '../../../core/models';
               </div>
               <p class="post-excerpt">{{ post.excerpt['en'] || '' }}</p>
               <div class="post-meta">
-                <span>{{ post.views }} views</span>
-                <span>{{ post.comments?.length || 0 }} comments</span>
-                <span>{{ formatDate(post.createdAt) }}</span>
+                <span>👁 {{ post.views }} views</span>
+                <span>💬 {{ post.comments?.length || 0 }} comments</span>
+                <span>📅 {{ formatDate(post.createdAt) }}</span>
               </div>
               <div class="post-actions">
                 <button class="btn btn-ghost btn-sm" (click)="edit(post)">Edit</button>
@@ -124,7 +155,7 @@ import type { BlogPost, BlogCategory } from '../../../core/models';
           </app-glass-card>
         } @empty {
           <div class="empty-state">
-            <p>No blog posts yet. Click "New Post" to create one.</p>
+            <p>No posts found.</p>
           </div>
         }
       </div>
@@ -143,6 +174,11 @@ import type { BlogPost, BlogCategory } from '../../../core/models';
   styles: [`
     .admin-page { padding: var(--space-xl); max-width: 1000px; }
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xl); h1 { font-size: var(--text-2xl); margin: 0; } }
+    .filters { display: flex; gap: var(--space-md); flex-wrap: wrap; margin-bottom: var(--space-lg); align-items: flex-end; }
+    .filter-group { display: flex; flex-direction: column; gap: var(--space-xs); label { font-size: var(--text-xs); color: var(--color-text-muted); } select { min-width: 120px; } }
+    .search-box { display: flex; gap: var(--space-xs); input { width: 200px; } }
+    .stats { display: flex; gap: var(--space-md); margin-bottom: var(--space-lg); }
+    .stat { font-size: var(--text-sm); padding: var(--space-xs) var(--space-md); border-radius: var(--radius-md); background: var(--color-surface-alt); &.draft { background: rgba(245, 158, 11, 0.1); color: var(--color-warning); } &.published { background: rgba(16, 185, 129, 0.1); color: var(--color-success); } }
     .lang-tabs { display: flex; gap: var(--space-sm); margin-bottom: var(--space-lg); }
     .tab { padding: var(--space-sm) var(--space-lg); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: transparent; color: var(--color-text-secondary); cursor: pointer; font-family: var(--font-body); &.active { background: var(--color-primary); color: white; border-color: var(--color-primary); } }
     .form-group { margin-bottom: var(--space-lg); label { display: block; font-weight: 500; margin-bottom: var(--space-sm); } }
@@ -178,6 +214,9 @@ export class AdminBlogComponent implements OnInit {
   deleteId: string | null = null;
   saving = false;
   tagsInput = '';
+  searchQuery = '';
+  filterStatus = 'all';
+  sortBy = 'newest';
 
   formData: any = this.emptyForm();
 
@@ -187,13 +226,21 @@ export class AdminBlogComponent implements OnInit {
     { code: 'de' as const, label: 'Deutsch' },
   ];
 
+  get draftCount(): number {
+    return this.posts.filter(p => p.status === 'draft').length;
+  }
+
+  get publishedCount(): number {
+    return this.posts.filter(p => p.status === 'published').length;
+  }
+
   ngOnInit() {
     this.loadPosts();
     this.loadCategories();
   }
 
   loadPosts() {
-    this.api.getBlogPosts().subscribe({
+    this.api.getBlogPosts(this.filterStatus, undefined, this.sortBy).subscribe({
       next: (p) => { this.posts = []; this.cdr.detectChanges(); this.posts = p; this.cdr.detectChanges(); },
       error: () => this.toast.error('Failed to load posts'),
     });
@@ -203,6 +250,17 @@ export class AdminBlogComponent implements OnInit {
     this.api.getBlogCategories().subscribe({
       next: (c) => { this.categories = c; this.cdr.detectChanges(); },
     });
+  }
+
+  search() {
+    if (this.searchQuery.trim()) {
+      this.api.searchBlog(this.searchQuery, this.filterStatus).subscribe({
+        next: (p) => { this.posts = p; this.cdr.detectChanges(); },
+        error: () => this.toast.error('Search failed'),
+      });
+    } else {
+      this.loadPosts();
+    }
   }
 
   emptyForm() {
