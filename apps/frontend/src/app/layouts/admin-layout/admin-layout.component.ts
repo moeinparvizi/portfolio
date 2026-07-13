@@ -54,7 +54,10 @@ import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme
             <span class="icon">📄</span> Resume
           </a>
           <a routerLink="/admin/blog" routerLinkActive="active" (click)="sidebarOpen = false">
-            <span class="icon">📝</span> Blog
+            <span class="icon">📝</span> Blog Posts
+          </a>
+          <a routerLink="/admin/blog/categories" routerLinkActive="active" (click)="sidebarOpen = false">
+            <span class="icon">🏷️</span> Blog Categories
           </a>
         </nav>
 

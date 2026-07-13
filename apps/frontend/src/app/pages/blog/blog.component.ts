@@ -23,6 +23,7 @@ import type { BlogPost, BlogCategory } from '../../core/models';
               🔍 Search
             </button>
             <select class="galaxy-select" [(ngModel)]="sortBy" (change)="loadPosts()">
+              <option value="">All</option>
               <option value="newest">Newest</option>
               <option value="oldest">Oldest</option>
               <option value="views">Popular</option>
