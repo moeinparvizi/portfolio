@@ -132,6 +132,7 @@ export interface BlogComment {
   content: string;
   approved: boolean;
   createdAt: string;
+  post?: { title: LocaleText; slug: string };
 }
 
 export type Locale = 'fa' | 'en' | 'de';
