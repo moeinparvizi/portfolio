@@ -25,12 +25,16 @@ import type { BlogComment } from '../../../core/models';
       <!-- Search & Filter -->
       <div class="filters">
         <div class="search-box">
-          <input type="text" [(ngModel)]="searchQuery" placeholder="Search comments..." class="galaxy-input" (input)="filterComments()" />
+          <span class="search-icon">🔍</span>
+          <input type="text" [(ngModel)]="searchQuery" placeholder="Search by name, email, or content..." class="search-input" (input)="filterComments()" />
+          @if (searchQuery) {
+            <button class="clear-btn" (click)="searchQuery = ''; filterComments()">✕</button>
+          }
         </div>
         <select class="galaxy-select" [(ngModel)]="filterStatus" (change)="filterComments()">
-          <option value="all">All</option>
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
+          <option value="all">All Comments</option>
+          <option value="pending">⏳ Pending</option>
+          <option value="approved">✅ Approved</option>
         </select>
       </div>
 
@@ -105,8 +109,47 @@ import type { BlogComment } from '../../../core/models';
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xl); flex-wrap: wrap; gap: var(--space-md); h1 { font-size: var(--text-2xl); margin: 0; } }
     .stats { display: flex; gap: var(--space-md); }
     .stat { font-size: var(--text-sm); padding: var(--space-xs) var(--space-md); border-radius: var(--radius-md); background: var(--color-surface-alt); &.pending { background: rgba(245, 158, 11, 0.1); color: var(--color-warning); } &.approved { background: rgba(16, 185, 129, 0.1); color: var(--color-success); } }
-    .filters { display: flex; gap: var(--space-md); margin-bottom: var(--space-lg); align-items: center; }
-    .search-box { flex: 1; max-width: 300px; }
+    .filters { display: flex; gap: var(--space-md); margin-bottom: var(--space-lg); align-items: center; flex-wrap: wrap; }
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      max-width: 400px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface);
+      transition: border-color var(--transition-fast);
+
+      &:focus-within {
+        border-color: var(--color-primary);
+      }
+    }
+    .search-icon { color: var(--color-text-muted); flex-shrink: 0; }
+    .search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--color-text);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+
+      &::placeholder { color: var(--color-text-muted); }
+    }
+    .clear-btn {
+      background: none;
+      border: none;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+
+      &:hover { background: var(--color-surface-alt); color: var(--color-text); }
+    }
     .list { display: flex; flex-direction: column; gap: var(--space-md); }
     .comment-card { display: flex; flex-direction: column; gap: var(--space-sm); &.pending { border-left: 3px solid var(--color-warning); } }
     .comment-header { display: flex; justify-content: space-between; align-items: flex-start; }
