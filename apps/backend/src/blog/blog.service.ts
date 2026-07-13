@@ -45,16 +45,20 @@ export class BlogService {
   async create(data: any) {
     // Generate slug from title
     const slug = this.generateSlug(data.title?.en || '');
+    // Handle empty categoryId - set to null if empty
+    const categoryId = data.categoryId || null;
     return this.prisma.blogPost.create({
-      data: { ...data, slug },
+      data: { ...data, slug, categoryId },
     });
   }
 
   async update(id: string, data: any) {
     await this.findOne(id);
+    // Handle empty categoryId - set to null if empty
+    const categoryId = data.categoryId || null;
     return this.prisma.blogPost.update({
       where: { id },
-      data,
+      data: { ...data, categoryId },
     });
   }
 
