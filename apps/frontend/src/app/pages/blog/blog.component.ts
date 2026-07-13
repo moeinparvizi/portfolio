@@ -6,22 +6,22 @@ import { ApiService } from '../../core/services/api.service';
 import { LocaleService } from '../../core/services/locale.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
 import { GlassCardComponent } from '../../shared/components/glass-card/glass-card.component';
+import { SpotlightSearchComponent } from '../../shared/components/spotlight-search/spotlight-search.component';
 import type { BlogPost, BlogCategory } from '../../core/models';
 
 @Component({
   selector: 'app-blog',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, TranslatePipe, GlassCardComponent],
+  imports: [CommonModule, RouterModule, FormsModule, TranslatePipe, GlassCardComponent, SpotlightSearchComponent],
   template: `
     <section class="section">
       <div class="container">
         <div class="blog-header">
           <h1>Blog</h1>
           <div class="header-actions">
-            <div class="search-box">
-              <input type="text" [(ngModel)]="searchQuery" placeholder="Search posts..." (keyup.enter)="search()" class="galaxy-input" />
-              <button class="btn btn-primary btn-sm" (click)="search()">🔍</button>
-            </div>
+            <button class="btn btn-glass" (click)="showSearch = true">
+              🔍 Search
+            </button>
             <select class="galaxy-select" [(ngModel)]="sortBy" (change)="loadPosts()">
               <option value="newest">Newest</option>
               <option value="oldest">Oldest</option>
@@ -79,6 +79,9 @@ import type { BlogPost, BlogCategory } from '../../core/models';
         </div>
       </div>
     </section>
+
+    <!-- Spotlight Search -->
+    <app-spotlight-search [open]="showSearch" mode="public" (close)="showSearch = false" />
   `,
   styles: [`
     .blog-header {
@@ -96,13 +99,6 @@ import type { BlogPost, BlogCategory } from '../../core/models';
       display: flex;
       gap: var(--space-md);
       align-items: center;
-    }
-
-    .search-box {
-      display: flex;
-      gap: var(--space-sm);
-
-      input { width: 200px; }
     }
 
     .categories {
@@ -210,8 +206,8 @@ export class BlogComponent implements OnInit {
   posts: BlogPost[] = [];
   categories: BlogCategory[] = [];
   activeCategory = '';
-  searchQuery = '';
   sortBy = 'newest';
+  showSearch = false;
 
   get filteredPosts(): BlogPost[] {
     let filtered = this.posts;
@@ -252,19 +248,6 @@ export class BlogComponent implements OnInit {
   filterByCategory(categoryId: string) {
     this.activeCategory = categoryId;
     this.loadPosts();
-  }
-
-  search() {
-    if (this.searchQuery.trim()) {
-      this.api.searchBlog(this.searchQuery, 'published').subscribe({
-        next: (p) => {
-          this.posts = p;
-          this.cdr.detectChanges();
-        },
-      });
-    } else {
-      this.loadPosts();
-    }
   }
 
   formatDate(date: string): string {

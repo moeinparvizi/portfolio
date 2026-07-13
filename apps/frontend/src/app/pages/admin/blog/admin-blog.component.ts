@@ -6,12 +6,13 @@ import { ToastService } from '../../../core/services/toast.service';
 import { GlassCardComponent } from '../../../shared/components/glass-card/glass-card.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
+import { SpotlightSearchComponent } from '../../../shared/components/spotlight-search/spotlight-search.component';
 import type { BlogPost, BlogCategory } from '../../../core/models';
 
 @Component({
   selector: 'app-admin-blog',
   standalone: true,
-  imports: [CommonModule, FormsModule, GlassCardComponent, ConfirmDialogComponent, ModalComponent],
+  imports: [CommonModule, FormsModule, GlassCardComponent, ConfirmDialogComponent, ModalComponent, SpotlightSearchComponent],
   template: `
     <div class="admin-page">
       <div class="page-header">
@@ -37,10 +38,7 @@ import type { BlogPost, BlogCategory } from '../../../core/models';
             <option value="views">Most Views</option>
           </select>
         </div>
-        <div class="filter-group search-box">
-          <input type="text" [(ngModel)]="searchQuery" placeholder="Search posts..." (keyup.enter)="search()" class="galaxy-input" />
-          <button class="btn btn-ghost btn-sm" (click)="search()">🔍</button>
-        </div>
+        <button class="btn btn-glass" (click)="showSearch = true">🔍 Search</button>
       </div>
 
       <!-- Stats -->
@@ -169,6 +167,9 @@ import type { BlogPost, BlogCategory } from '../../../core/models';
         (confirm)="deletePost()"
         (cancel)="showConfirm = false"
       />
+
+      <!-- Spotlight Search -->
+      <app-spotlight-search [open]="showSearch" mode="admin" (close)="showSearch = false" />
     </div>
   `,
   styles: [`
@@ -214,7 +215,7 @@ export class AdminBlogComponent implements OnInit {
   deleteId: string | null = null;
   saving = false;
   tagsInput = '';
-  searchQuery = '';
+  showSearch = false;
   filterStatus = 'all';
   sortBy = 'newest';
 
@@ -250,17 +251,6 @@ export class AdminBlogComponent implements OnInit {
     this.api.getBlogCategories().subscribe({
       next: (c) => { this.categories = c; this.cdr.detectChanges(); },
     });
-  }
-
-  search() {
-    if (this.searchQuery.trim()) {
-      this.api.searchBlog(this.searchQuery, this.filterStatus).subscribe({
-        next: (p) => { this.posts = p; this.cdr.detectChanges(); },
-        error: () => this.toast.error('Search failed'),
-      });
-    } else {
-      this.loadPosts();
-    }
   }
 
   emptyForm() {

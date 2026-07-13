@@ -75,20 +75,42 @@ export class BlogService {
     return this.prisma.blogPost.delete({ where: { id } });
   }
 
-  async search(query: string, status?: string) {
-    const where: Prisma.BlogPostWhereInput = {
-      tags: { has: query },
-    };
+  async search(query: string, status?: string, searchField?: string) {
+    // Use raw SQL for JSON field search
+    const searchTerm = `%${query}%`;
+
+    let sql = `
+      SELECT bp.*, bc.id as "categoryId", bc.name as "categoryName", bc.slug as "categorySlug"
+      FROM "BlogPost" bp
+      LEFT JOIN "BlogCategory" bc ON bp."categoryId" = bc.id
+      WHERE (
+        bp."title"::text ILIKE $1
+        OR bp."excerpt"::text ILIKE $1
+        OR bp."content"::text ILIKE $1
+        OR $2 = ANY(bp."tags")
+      )
+    `;
+
+    const params: any[] = [searchTerm, query];
 
     if (status && status !== 'all') {
-      where.status = status;
+      sql += ` AND bp."status" = $3`;
+      params.push(status);
     }
 
-    return this.prisma.blogPost.findMany({
-      where,
-      include: { category: true },
-      orderBy: { createdAt: 'desc' },
-    });
+    sql += ` ORDER BY bp."createdAt" DESC`;
+
+    const results = await this.prisma.$queryRawUnsafe(sql, ...params);
+
+    // Transform category data
+    return (results as any[]).map(row => ({
+      ...row,
+      category: row.categoryName ? {
+        id: row.categoryId,
+        name: row.categoryName,
+        slug: row.categorySlug,
+      } : null,
+    }));
   }
 
   private generateSlug(title: string): string {
