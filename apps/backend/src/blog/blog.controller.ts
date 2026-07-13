@@ -12,8 +12,10 @@ export class BlogController {
   @Get()
   @Public()
   @ApiOperation({ summary: 'Get all blog posts' })
-  findAll(@Query('all') all?: string) {
-    return this.blogService.findAll(all !== 'true');
+  findAll(@Query('published') published?: string) {
+    // Return all posts by default (admin needs to see drafts too)
+    // Use ?published=true to get only published posts
+    return this.blogService.findAll(published === 'true');
   }
 
   @Get('search')
