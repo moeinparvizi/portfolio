@@ -243,15 +243,19 @@ export class BlogDetailComponent implements OnInit {
     }
 
     this.submitting = true;
+    this.cdr.detectChanges();
+
     this.api.createBlogComment(this.post.id, this.commentForm).subscribe({
       next: () => {
         this.submitting = false;
         this.commentForm = { name: '', email: '', content: '' };
         this.toast.success('Comment submitted! It will appear after approval.');
+        this.cdr.detectChanges();
       },
       error: () => {
         this.submitting = false;
         this.toast.error('Failed to submit comment');
+        this.cdr.detectChanges();
       },
     });
   }
