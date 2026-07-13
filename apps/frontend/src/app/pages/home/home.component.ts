@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
 import { LocaleService } from '../../core/services/locale.service';
+import { ToastService } from '../../core/services/toast.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
 import { GlassCardComponent } from '../../shared/components/glass-card/glass-card.component';
 import type { Profile, Project, Skill } from '../../core/models';
@@ -32,6 +33,9 @@ import type { Profile, Project, Skill } from '../../core/models';
             <a class="btn btn-glass btn-lg" [routerLink]="getLink('/contact')">
               Contact Me
             </a>
+            <button class="btn btn-glass btn-lg" (click)="downloadResume()">
+              📄 Download Resume
+            </button>
           </div>
         </div>
         @if (profile?.avatarUrl) {
@@ -248,10 +252,12 @@ export class HomeComponent implements OnInit {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private localeService = inject(LocaleService);
+  private toast = inject(ToastService);
 
   profile: Profile | null = null;
   featuredProjects: Project[] = [];
   skills: Skill[] = [];
+  downloading = false;
 
   getLink(path: string): string {
     const locale = this.localeService.getLocale();
@@ -262,6 +268,27 @@ export class HomeComponent implements OnInit {
     // Remove leading slash if present, then prepend locale
     const cleanPath = path.startsWith('/') ? path.substring(1) : path;
     return `/${locale}/${cleanPath}`;
+  }
+
+  downloadResume() {
+    this.downloading = true;
+    const locale = this.localeService.getLocale();
+    this.api.generateResume(locale, true).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `resume-${locale}.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
+        this.downloading = false;
+        this.toast.success('Resume downloaded!');
+      },
+      error: () => {
+        this.downloading = false;
+        this.toast.error('Failed to download resume');
+      },
+    });
   }
 
   ngOnInit() {

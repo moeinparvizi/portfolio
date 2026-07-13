@@ -38,7 +38,17 @@ import type { Skill } from '../../../core/models';
           <div class="form-row">
             <div class="form-group">
               <label>Category</label>
-              <input type="text" [(ngModel)]="formData.category" name="category" placeholder="e.g., Frontend, Backend, DevOps" />
+              <select [(ngModel)]="formData.category" name="category">
+                <option value="">Select category</option>
+                <option value="Frontend">Frontend</option>
+                <option value="Backend">Backend</option>
+                <option value="Database">Database</option>
+                <option value="DevOps">DevOps</option>
+                <option value="Mobile">Mobile</option>
+                <option value="Design">Design</option>
+                <option value="Soft Skills">Soft Skills</option>
+                <option value="Other">Other</option>
+              </select>
             </div>
             <div class="form-group">
               <label>Proficiency Level</label>
