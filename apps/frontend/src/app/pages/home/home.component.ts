@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
+import { LocaleService } from '../../core/services/locale.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
 import { GlassCardComponent } from '../../shared/components/glass-card/glass-card.component';
 import type { Profile, Project, Skill } from '../../core/models';
@@ -25,10 +26,10 @@ import type { Profile, Project, Skill } from '../../core/models';
             {{ profile?.summary | translate }}
           </p>
           <div class="hero-actions">
-            <a class="btn btn-primary btn-lg" [routerLink]="profile?.heroCtaLink || '/projects'">
+            <a class="btn btn-primary btn-lg" [routerLink]="getLink(profile?.heroCtaLink || '/projects')">
               {{ profile?.heroCtaLabel | translate }}
             </a>
-            <a class="btn btn-glass btn-lg" routerLink="/contact">
+            <a class="btn btn-glass btn-lg" [routerLink]="getLink('/contact')">
               Contact Me
             </a>
           </div>
@@ -49,7 +50,7 @@ import type { Profile, Project, Skill } from '../../core/models';
           <div class="projects-grid">
             @for (project of featuredProjects; track project.id) {
               <app-glass-card [hoverable]="true">
-                <a [routerLink]="['/projects', project.id]" class="project-link">
+                <a [routerLink]="getLink('/projects/' + project.id)" class="project-link">
                   @if (project.images?.[0]) {
                     <img [src]="project.images[0]" [alt]="project.title | translate" class="project-image" />
                   }
@@ -85,7 +86,7 @@ import type { Profile, Project, Skill } from '../../core/models';
               </div>
             }
           </div>
-          <a routerLink="/skills" class="btn btn-ghost" style="margin-top: var(--space-lg)">
+          <a [routerLink]="getLink('/skills')" class="btn btn-ghost" style="margin-top: var(--space-lg)">
             View All Skills
           </a>
         </div>
@@ -246,10 +247,18 @@ import type { Profile, Project, Skill } from '../../core/models';
 export class HomeComponent implements OnInit {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
+  private localeService = inject(LocaleService);
 
   profile: Profile | null = null;
   featuredProjects: Project[] = [];
   skills: Skill[] = [];
+
+  getLink(path: string): string {
+    const locale = this.localeService.getLocale();
+    // Remove leading slash if present, then prepend locale
+    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+    return `/${locale}/${cleanPath}`;
+  }
 
   ngOnInit() {
     this.api.getProfile().subscribe(p => {
