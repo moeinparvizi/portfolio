@@ -6,8 +6,15 @@ export class BlogCommentService {
   constructor(private prisma: PrismaService) {}
 
   async findByPost(postId: string) {
+    // Get top-level comments with their replies
     return this.prisma.blogComment.findMany({
-      where: { postId, approved: true },
+      where: { postId, parentId: null, approved: true },
+      include: {
+        replies: {
+          where: { approved: true },
+          orderBy: { createdAt: 'asc' },
+        },
+      },
       orderBy: { createdAt: 'desc' },
     });
   }
@@ -26,6 +33,23 @@ export class BlogCommentService {
 
     return this.prisma.blogComment.create({
       data: { ...data, postId },
+    });
+  }
+
+  async reply(parentId: string, data: any) {
+    // Get parent comment to get postId
+    const parent = await this.prisma.blogComment.findUnique({ where: { id: parentId } });
+    if (!parent) throw new NotFoundException('Parent comment not found');
+
+    return this.prisma.blogComment.create({
+      data: {
+        postId: parent.postId,
+        parentId,
+        name: data.name,
+        email: data.email,
+        content: data.content,
+        approved: false,
+      },
     });
   }
 

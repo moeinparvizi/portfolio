@@ -127,12 +127,14 @@ export interface BlogPost {
 export interface BlogComment {
   id: string;
   postId: string;
+  parentId?: string;
   name: string;
   email: string;
   content: string;
   approved: boolean;
   createdAt: string;
   post?: { title: LocaleText; slug: string };
+  replies?: BlogComment[];
 }
 
 export type Locale = 'fa' | 'en' | 'de';

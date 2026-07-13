@@ -230,6 +230,10 @@ export class ApiService {
     return this.http.put<void>(`${this.base}/blog/comments/${id}/approve`, {});
   }
 
+  replyToComment(commentId: string, data: { name: string; email: string; content: string }): Observable<BlogComment> {
+    return this.http.post<BlogComment>(`${this.base}/blog/comments/${commentId}/reply`, data);
+  }
+
   deleteBlogComment(id: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/blog/comments/${id}`);
   }

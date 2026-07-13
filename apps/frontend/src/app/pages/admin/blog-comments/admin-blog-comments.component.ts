@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/services/api.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { GlassCardComponent } from '../../../shared/components/glass-card/glass-card.component';
@@ -9,7 +10,7 @@ import type { BlogComment } from '../../../core/models';
 @Component({
   selector: 'app-admin-blog-comments',
   standalone: true,
-  imports: [CommonModule, GlassCardComponent, ConfirmDialogComponent],
+  imports: [CommonModule, FormsModule, GlassCardComponent, ConfirmDialogComponent],
   template: `
     <div class="admin-page">
       <div class="page-header">
@@ -45,8 +46,26 @@ import type { BlogComment } from '../../../core/models';
                   </div>
                   <div class="comment-actions">
                     <button class="btn btn-primary btn-sm" (click)="approve(comment.id)">✓ Approve</button>
+                    <button class="btn btn-ghost btn-sm" (click)="toggleReply(comment.id)">💬 Reply</button>
                     <button class="btn btn-ghost btn-sm btn-danger" (click)="confirmDelete(comment.id)">Delete</button>
                   </div>
+
+                  <!-- Reply Form -->
+                  @if (replyingTo === comment.id) {
+                    <div class="reply-form">
+                      <form (ngSubmit)="submitReply(comment.id)">
+                        <div class="form-row">
+                          <input type="text" [(ngModel)]="replyForm.name" name="name" placeholder="Your Name" class="galaxy-input" required />
+                          <input type="email" [(ngModel)]="replyForm.email" name="email" placeholder="Your Email" class="galaxy-input" required />
+                        </div>
+                        <textarea [(ngModel)]="replyForm.content" name="content" rows="3" placeholder="Write your reply..." class="galaxy-textarea" required></textarea>
+                        <div class="reply-actions">
+                          <button type="button" class="btn btn-ghost btn-sm" (click)="cancelReply()">Cancel</button>
+                          <button type="submit" class="btn btn-primary btn-sm" [disabled]="replying">Send Reply</button>
+                        </div>
+                      </form>
+                    </div>
+                  }
                 </div>
               </app-glass-card>
             }
@@ -81,8 +100,26 @@ import type { BlogComment } from '../../../core/models';
                     <span>{{ formatDate(comment.createdAt) }}</span>
                   </div>
                   <div class="comment-actions">
+                    <button class="btn btn-ghost btn-sm" (click)="toggleReply(comment.id)">💬 Reply</button>
                     <button class="btn btn-ghost btn-sm btn-danger" (click)="confirmDelete(comment.id)">Delete</button>
                   </div>
+
+                  <!-- Reply Form -->
+                  @if (replyingTo === comment.id) {
+                    <div class="reply-form">
+                      <form (ngSubmit)="submitReply(comment.id)">
+                        <div class="form-row">
+                          <input type="text" [(ngModel)]="replyForm.name" name="name" placeholder="Your Name" class="galaxy-input" required />
+                          <input type="email" [(ngModel)]="replyForm.email" name="email" placeholder="Your Email" class="galaxy-input" required />
+                        </div>
+                        <textarea [(ngModel)]="replyForm.content" name="content" rows="3" placeholder="Write your reply..." class="galaxy-textarea" required></textarea>
+                        <div class="reply-actions">
+                          <button type="button" class="btn btn-ghost btn-sm" (click)="cancelReply()">Cancel</button>
+                          <button type="submit" class="btn btn-primary btn-sm" [disabled]="replying">Send Reply</button>
+                        </div>
+                      </form>
+                    </div>
+                  }
                 </div>
               </app-glass-card>
             }
@@ -119,6 +156,7 @@ import type { BlogComment } from '../../../core/models';
     .comment-actions { display: flex; gap: var(--space-sm); margin-top: var(--space-sm); }
     .btn-danger { color: var(--color-error); &:hover { background: rgba(239, 68, 68, 0.1); } }
     .empty-state { text-align: center; padding: var(--space-xl); color: var(--color-text-muted); }
+    .reply-form { margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--color-border); .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-bottom: var(--space-sm); } textarea { width: 100%; margin-bottom: var(--space-sm); } .reply-actions { display: flex; gap: var(--space-sm); justify-content: flex-end; } }
   `],
 })
 export class AdminBlogCommentsComponent implements OnInit {
@@ -129,6 +167,9 @@ export class AdminBlogCommentsComponent implements OnInit {
   comments: BlogComment[] = [];
   showConfirm = false;
   deleteId: string | null = null;
+  replyingTo: string | null = null;
+  replying = false;
+  replyForm = { name: '', email: '', content: '' };
 
   get pendingComments(): BlogComment[] {
     return this.comments.filter(c => !c.approved);
@@ -149,7 +190,6 @@ export class AdminBlogCommentsComponent implements OnInit {
   ngOnInit() { this.load(); }
 
   load() {
-    // Get all comments from all posts
     this.api.getBlogPosts().subscribe({
       next: (posts) => {
         const allComments: BlogComment[] = [];
@@ -172,6 +212,37 @@ export class AdminBlogCommentsComponent implements OnInit {
     this.api.approveBlogComment(id).subscribe({
       next: () => { this.load(); this.toast.success('Comment approved!'); },
       error: () => this.toast.error('Failed to approve'),
+    });
+  }
+
+  toggleReply(commentId: string) {
+    this.replyingTo = this.replyingTo === commentId ? null : commentId;
+    this.replyForm = { name: 'Admin', email: 'admin@portfolio.com', content: '' };
+  }
+
+  cancelReply() {
+    this.replyingTo = null;
+    this.replyForm = { name: '', email: '', content: '' };
+  }
+
+  submitReply(commentId: string) {
+    if (!this.replyForm.content) {
+      this.toast.warning('Reply content is required');
+      return;
+    }
+
+    this.replying = true;
+    this.api.replyToComment(commentId, this.replyForm).subscribe({
+      next: () => {
+        this.replying = false;
+        this.cancelReply();
+        this.load();
+        this.toast.success('Reply sent!');
+      },
+      error: () => {
+        this.replying = false;
+        this.toast.error('Failed to send reply');
+      },
     });
   }
 

@@ -164,6 +164,9 @@ model BlogComment {
   id        String   @id @default(uuid())
   postId    String
   post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parentId  String?
+  parent    BlogComment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   BlogComment[] @relation("CommentReplies")
   name      String
   email     String
   content   String

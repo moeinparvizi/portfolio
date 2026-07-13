@@ -51,7 +51,7 @@ import type { BlogPost, BlogComment } from '../../core/models';
 
           <!-- Comments Section -->
           <div class="comments-section">
-            <h2>Comments ({{ post.comments?.length || 0 }})</h2>
+            <h2>Comments ({{ getTotalComments() }})</h2>
 
             @if (post.comments?.length) {
               <div class="comments-list">
@@ -63,6 +63,22 @@ import type { BlogPost, BlogComment } from '../../core/models';
                         <span class="comment-date">{{ formatDate(comment.createdAt) }}</span>
                       </div>
                       <p class="comment-content">{{ comment.content }}</p>
+
+                      <!-- Replies -->
+                      @if (comment.replies?.length) {
+                        <div class="replies">
+                          @for (reply of comment.replies; track reply.id) {
+                            <div class="reply">
+                              <div class="comment-header">
+                                <strong>{{ reply.name }}</strong>
+                                <span class="reply-badge">Admin</span>
+                                <span class="comment-date">{{ formatDate(reply.createdAt) }}</span>
+                              </div>
+                              <p class="comment-content">{{ reply.content }}</p>
+                            </div>
+                          }
+                        </div>
+                      }
                     </div>
                   </app-glass-card>
                 }
@@ -236,6 +252,30 @@ import type { BlogPost, BlogComment } from '../../core/models';
     }
 
     .req { color: var(--color-error); }
+
+    .replies {
+      margin-top: var(--space-md);
+      padding-left: var(--space-lg);
+      border-left: 2px solid var(--color-border);
+    }
+
+    .reply {
+      padding: var(--space-md) 0;
+      border-bottom: 1px solid var(--color-border);
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    .reply-badge {
+      font-size: var(--text-xs);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      background: var(--color-primary);
+      color: white;
+      margin-left: var(--space-sm);
+    }
   `],
 })
 export class BlogDetailComponent implements OnInit {
@@ -249,6 +289,15 @@ export class BlogDetailComponent implements OnInit {
   submitting = false;
   commentSubmitted = false;
   commentForm = { name: '', email: '', content: '' };
+
+  getTotalComments(): number {
+    if (!this.post?.comments) return 0;
+    let total = this.post.comments.length;
+    this.post.comments.forEach(c => {
+      if (c.replies) total += c.replies.length;
+    });
+    return total;
+  }
 
   getLink(path: string): string {
     const locale = this.localeService.getLocale();
