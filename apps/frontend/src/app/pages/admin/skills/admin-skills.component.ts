@@ -38,7 +38,7 @@ import type { Skill } from '../../../core/models';
           <div class="form-row">
             <div class="form-group">
               <label>Category</label>
-              <select [(ngModel)]="formData.category" name="category">
+              <select class="galaxy-select" [(ngModel)]="formData.category" name="category">
                 <option value="">Select category</option>
                 <option value="Frontend">Frontend</option>
                 <option value="Backend">Backend</option>
