@@ -346,44 +346,6 @@ import type { SiteSettings } from '../../../core/models';
       &.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
     }
 
-    .toggle {
-      display: flex;
-      align-items: center;
-      gap: var(--space-md);
-      cursor: pointer;
-
-      input { display: none; }
-
-      .toggle-slider {
-        width: 50px;
-        height: 26px;
-        background: var(--color-border);
-        border-radius: 13px;
-        position: relative;
-        transition: background var(--transition-fast);
-
-        &::after {
-          content: '';
-          position: absolute;
-          width: 22px;
-          height: 22px;
-          background: white;
-          border-radius: 50%;
-          top: 2px;
-          left: 2px;
-          transition: transform var(--transition-fast);
-        }
-      }
-
-      input:checked + .toggle-slider {
-        background: var(--color-primary);
-
-        &::after {
-          transform: translateX(24px);
-        }
-      }
-    }
-
     .footer-preview {
       padding: var(--space-lg);
       background: var(--color-surface-alt);

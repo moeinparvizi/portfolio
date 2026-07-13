@@ -14,19 +14,17 @@ export class ResumeService {
   async generatePdf(options: ResumeOptions): Promise<Buffer> {
     const { locale, showPhoto } = options;
 
-    // Gather data
+    // Gather data - include all items in resume
     const profile = await this.prisma.profile.findFirst();
     const skills = await this.prisma.skill.findMany({ orderBy: { sortOrder: 'asc' } });
     const projects = await this.prisma.project.findMany({
-      where: { includeInResume: true, status: 'published' },
+      where: { status: 'published' },
       orderBy: { sortOrder: 'asc' },
     });
     const experience = await this.prisma.experience.findMany({
-      where: { includeInResume: true },
       orderBy: { sortOrder: 'asc' },
     });
     const education = await this.prisma.education.findMany({
-      where: { includeInResume: true },
       orderBy: { sortOrder: 'asc' },
     });
 
