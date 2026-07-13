@@ -128,3 +128,45 @@ model SiteSettings {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+// ─── Blog ──────────────────────────────────────────────
+
+model BlogCategory {
+  id        String   @id @default(uuid())
+  name      Json     // { fa, en, de }
+  slug      String   @unique
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  posts     BlogPost[]
+}
+
+model BlogPost {
+  id          String   @id @default(uuid())
+  title       Json     // { fa, en, de }
+  slug        String   @unique
+  content     Json     // { fa, en, de }
+  excerpt     Json     // { fa, en, de }
+  coverImage  String?
+  authorName  String?
+  status      String   @default("draft") // draft | published
+  tags        String[]
+  categoryId  String?
+  category    BlogCategory? @relation(fields: [categoryId], references: [id])
+  views       Int      @default(0)
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  comments    BlogComment[]
+}
+
+model BlogComment {
+  id        String   @id @default(uuid())
+  postId    String
+  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  name      String
+  email     String
+  content   String
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

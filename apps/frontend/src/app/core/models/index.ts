@@ -95,4 +95,43 @@ export interface SiteSettings {
   value: any;
 }
 
+// ─── Blog ──────────────────────────────────────────────
+
+export interface BlogCategory {
+  id: string;
+  name: LocaleText;
+  slug: string;
+  sortOrder: number;
+  _count?: { posts: number };
+}
+
+export interface BlogPost {
+  id: string;
+  title: LocaleText;
+  slug: string;
+  content: LocaleText;
+  excerpt: LocaleText;
+  coverImage?: string;
+  authorName?: string;
+  status: 'draft' | 'published';
+  tags: string[];
+  categoryId?: string;
+  category?: BlogCategory;
+  views: number;
+  featured: boolean;
+  comments?: BlogComment[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BlogComment {
+  id: string;
+  postId: string;
+  name: string;
+  email: string;
+  content: string;
+  approved: boolean;
+  createdAt: string;
+}
+
 export type Locale = 'fa' | 'en' | 'de';

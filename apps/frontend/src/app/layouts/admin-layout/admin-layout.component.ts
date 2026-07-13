@@ -53,6 +53,9 @@ import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme
           <a routerLink="/admin/resume" routerLinkActive="active" (click)="sidebarOpen = false">
             <span class="icon">📄</span> Resume
           </a>
+          <a routerLink="/admin/blog" routerLinkActive="active" (click)="sidebarOpen = false">
+            <span class="icon">📝</span> Blog
+          </a>
         </nav>
 
         <div class="sidebar-footer">

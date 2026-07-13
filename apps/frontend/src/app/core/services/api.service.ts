@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import type {
   Profile, Skill, Project, Experience, Education,
   Testimonial, ContactMessage, SiteSettings,
+  BlogPost, BlogCategory, BlogComment,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -160,5 +161,68 @@ export class ApiService {
     return this.http.post(`${this.base}/resume/generate`, { locale, showPhoto }, {
       responseType: 'blob',
     });
+  }
+
+  // Blog Posts
+  getBlogPosts(): Observable<BlogPost[]> {
+    return this.http.get<BlogPost[]>(`${this.base}/blog`);
+  }
+
+  getBlogPost(id: string): Observable<BlogPost> {
+    return this.http.get<BlogPost>(`${this.base}/blog/${id}`);
+  }
+
+  getBlogPostBySlug(slug: string): Observable<BlogPost> {
+    return this.http.get<BlogPost>(`${this.base}/blog/slug/${slug}`);
+  }
+
+  createBlogPost(data: Partial<BlogPost>): Observable<BlogPost> {
+    return this.http.post<BlogPost>(`${this.base}/blog`, data);
+  }
+
+  updateBlogPost(id: string, data: Partial<BlogPost>): Observable<BlogPost> {
+    return this.http.put<BlogPost>(`${this.base}/blog/${id}`, data);
+  }
+
+  deleteBlogPost(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/blog/${id}`);
+  }
+
+  searchBlog(query: string): Observable<BlogPost[]> {
+    return this.http.get<BlogPost[]>(`${this.base}/blog/search?q=${query}`);
+  }
+
+  // Blog Categories
+  getBlogCategories(): Observable<BlogCategory[]> {
+    return this.http.get<BlogCategory[]>(`${this.base}/blog/categories`);
+  }
+
+  createBlogCategory(data: Partial<BlogCategory>): Observable<BlogCategory> {
+    return this.http.post<BlogCategory>(`${this.base}/blog/categories`, data);
+  }
+
+  updateBlogCategory(id: string, data: Partial<BlogCategory>): Observable<BlogCategory> {
+    return this.http.put<BlogCategory>(`${this.base}/blog/categories/${id}`, data);
+  }
+
+  deleteBlogCategory(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/blog/categories/${id}`);
+  }
+
+  // Blog Comments
+  getBlogComments(postId: string): Observable<BlogComment[]> {
+    return this.http.get<BlogComment[]>(`${this.base}/blog/${postId}/comments`);
+  }
+
+  createBlogComment(postId: string, data: Partial<BlogComment>): Observable<BlogComment> {
+    return this.http.post<BlogComment>(`${this.base}/blog/${postId}/comments`, data);
+  }
+
+  approveBlogComment(id: string): Observable<void> {
+    return this.http.put<void>(`${this.base}/blog/comments/${id}/approve`, {});
+  }
+
+  deleteBlogComment(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/blog/comments/${id}`);
   }
 }

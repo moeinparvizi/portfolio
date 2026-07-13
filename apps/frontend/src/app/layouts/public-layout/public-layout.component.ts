@@ -29,6 +29,7 @@ import type { Profile } from '../../core/models';
           <a routerLink="projects" routerLinkActive="active">Projects</a>
           <a routerLink="experience" routerLinkActive="active">Experience</a>
           <a routerLink="education" routerLinkActive="active">Education</a>
+          <a routerLink="blog" routerLinkActive="active">Blog</a>
           <a routerLink="contact" routerLinkActive="active">Contact</a>
         </nav>
 
@@ -46,6 +47,7 @@ import type { Profile } from '../../core/models';
           <a routerLink="projects" routerLinkActive="active" (click)="menuOpen = false">Projects</a>
           <a routerLink="experience" routerLinkActive="active" (click)="menuOpen = false">Experience</a>
           <a routerLink="education" routerLinkActive="active" (click)="menuOpen = false">Education</a>
+          <a routerLink="blog" routerLinkActive="active" (click)="menuOpen = false">Blog</a>
           <a routerLink="contact" routerLinkActive="active" (click)="menuOpen = false">Contact</a>
         </nav>
       }

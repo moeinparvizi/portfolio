@@ -25,6 +25,7 @@ export const routes: Routes = [
       { path: 'contact', loadComponent: () => import('./pages/admin/contact/admin-contact.component').then(m => m.AdminContactComponent) },
       { path: 'settings', loadComponent: () => import('./pages/admin/settings/admin-settings.component').then(m => m.AdminSettingsComponent) },
       { path: 'resume', loadComponent: () => import('./pages/admin/resume/admin-resume.component').then(m => m.AdminResumeComponent) },
+      { path: 'blog', loadComponent: () => import('./pages/admin/blog/admin-blog.component').then(m => m.AdminBlogComponent) },
     ],
   },
 
@@ -42,6 +43,8 @@ export const routes: Routes = [
       { path: 'education', loadComponent: () => import('./pages/education/education.component').then(m => m.EducationComponent) },
       { path: 'testimonials', loadComponent: () => import('./pages/testimonials/testimonials.component').then(m => m.TestimonialsComponent) },
       { path: 'contact', loadComponent: () => import('./pages/contact/contact.component').then(m => m.ContactComponent) },
+      { path: 'blog', loadComponent: () => import('./pages/blog/blog.component').then(m => m.BlogComponent) },
+      { path: 'blog/:slug', loadComponent: () => import('./pages/blog-detail/blog-detail.component').then(m => m.BlogDetailComponent) },
       { path: 'privacy', loadComponent: () => import('./pages/privacy/privacy.component').then(m => m.PrivacyComponent) },
     ],
   },
