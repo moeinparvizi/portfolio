@@ -34,13 +34,6 @@ export class BlogController {
     return this.blogService.findBySlug(slug);
   }
 
-  @Get(':id')
-  @Public()
-  @ApiOperation({ summary: 'Get post by ID' })
-  findOne(@Param('id') id: string) {
-    return this.blogService.findOne(id);
-  }
-
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
