@@ -1,8 +1,8 @@
-import { Controller, Post, Body, Res, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Post, Body, Res } from '@nestjs/common';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import type { Response } from 'express';
 import { ResumeService } from './resume.service';
-import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { Public } from '../common/decorators/public.decorator';
 
 class GenerateResumeDto {
   locale: 'fa' | 'en' | 'de';
@@ -15,9 +15,8 @@ export class ResumeController {
   constructor(private resumeService: ResumeService) {}
 
   @Post('generate')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Generate resume PDF (admin)' })
+  @Public()
+  @ApiOperation({ summary: 'Generate resume PDF (public)' })
   async generate(
     @Body() dto: GenerateResumeDto,
     @Res() res: Response,
