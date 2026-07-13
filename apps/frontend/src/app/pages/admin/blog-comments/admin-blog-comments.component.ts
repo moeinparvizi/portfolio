@@ -187,6 +187,7 @@ export class AdminBlogCommentsComponent implements OnInit {
     }
 
     this.filteredComments = filtered;
+    this.cdr.detectChanges();
   }
 
   approve(id: string) {
