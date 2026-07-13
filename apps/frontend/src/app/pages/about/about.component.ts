@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
+import { LocaleService } from '../../core/services/locale.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
 import { GlassCardComponent } from '../../shared/components/glass-card/glass-card.component';
 import type { Profile, Skill, Experience, Education } from '../../core/models';
@@ -36,7 +37,7 @@ import type { Profile, Skill, Experience, Education } from '../../core/models';
                   <span>LinkedIn</span>
                 </a>
               }
-              <a routerLink="/contact" class="social-btn primary">
+              <a [routerLink]="getLink('/contact')" class="social-btn primary">
                 <span>Contact Me</span>
               </a>
             </div>
@@ -92,7 +93,7 @@ import type { Profile, Skill, Experience, Education } from '../../core/models';
                 </app-glass-card>
               }
             </div>
-            <a routerLink="/skills" class="btn btn-ghost">View All Skills →</a>
+            <a [routerLink]="getLink('/skills')" class="btn btn-ghost">View All Skills →</a>
           </div>
         }
 
@@ -117,7 +118,7 @@ import type { Profile, Skill, Experience, Education } from '../../core/models';
                 </div>
               }
             </div>
-            <a routerLink="/experience" class="btn btn-ghost">View Full Experience →</a>
+            <a [routerLink]="getLink('/experience')" class="btn btn-ghost">View Full Experience →</a>
           </div>
         }
 
@@ -127,7 +128,7 @@ import type { Profile, Skill, Experience, Education } from '../../core/models';
             <div class="cta-content">
               <h2>Let's Work Together</h2>
               <p>Have a project in mind? Let's discuss how I can help you.</p>
-              <a routerLink="/contact" class="btn btn-primary btn-lg">Get In Touch</a>
+              <a [routerLink]="getLink('/contact')" class="btn btn-primary btn-lg">Get In Touch</a>
             </div>
           </app-glass-card>
         </div>
@@ -378,11 +379,21 @@ import type { Profile, Skill, Experience, Education } from '../../core/models';
 export class AboutComponent implements OnInit {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
+  private localeService = inject(LocaleService);
 
   profile: Profile | null = null;
   skills: Skill[] = [];
   experience: Experience[] = [];
   education: Education[] = [];
+
+  getLink(path: string): string {
+    const locale = this.localeService.getLocale();
+    if (path.startsWith('/en/') || path.startsWith('/fa/') || path.startsWith('/de/')) {
+      return path;
+    }
+    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+    return `/${locale}/${cleanPath}`;
+  }
 
   get yearsOfExperience(): number {
     if (this.experience.length === 0) return 0;

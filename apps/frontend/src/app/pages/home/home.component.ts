@@ -255,6 +255,10 @@ export class HomeComponent implements OnInit {
 
   getLink(path: string): string {
     const locale = this.localeService.getLocale();
+    // If path already has locale prefix, return as is
+    if (path.startsWith('/en/') || path.startsWith('/fa/') || path.startsWith('/de/')) {
+      return path;
+    }
     // Remove leading slash if present, then prepend locale
     const cleanPath = path.startsWith('/') ? path.substring(1) : path;
     return `/${locale}/${cleanPath}`;

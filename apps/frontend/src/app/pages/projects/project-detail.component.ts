@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
+import { LocaleService } from '../../core/services/locale.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
 import { GlassCardComponent } from '../../shared/components/glass-card/glass-card.component';
 import type { Project } from '../../core/models';
@@ -18,7 +19,7 @@ import type { Project } from '../../core/models';
         }
 
         @if (project; as p) {
-          <a routerLink="/en/projects" class="back-link">← Back to Projects</a>
+          <a [routerLink]="getLink('/projects')" class="back-link">← Back to Projects</a>
 
           <div class="project-header">
             <h1>{{ p.title | translate }}</h1>
@@ -79,7 +80,7 @@ import type { Project } from '../../core/models';
         @if (!loading && !project) {
           <div class="not-found">
             <h2>Project not found</h2>
-            <a routerLink="/en/projects" class="btn btn-primary">Back to Projects</a>
+            <a [routerLink]="getLink('/projects')" class="btn btn-primary">Back to Projects</a>
           </div>
         }
       </div>
@@ -196,9 +197,19 @@ export class ProjectDetailComponent implements OnInit {
   private api = inject(ApiService);
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
+  private localeService = inject(LocaleService);
 
   project: Project | null = null;
   loading = true;
+
+  getLink(path: string): string {
+    const locale = this.localeService.getLocale();
+    if (path.startsWith('/en/') || path.startsWith('/fa/') || path.startsWith('/de/')) {
+      return path;
+    }
+    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+    return `/${locale}/${cleanPath}`;
+  }
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
