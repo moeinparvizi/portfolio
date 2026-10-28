@@ -3,10 +3,16 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import type { Response } from 'express';
 import { ResumeService } from './resume.service';
 import { Public } from '../common/decorators/public.decorator';
+import { IsBoolean, IsIn, IsOptional } from 'class-validator';
 
 class GenerateResumeDto {
-  locale: 'fa' | 'en' | 'de';
-  showPhoto: boolean;
+  @IsOptional()
+  @IsIn(['fa', 'en', 'de'])
+  locale: 'fa' | 'en' | 'de' = 'en';
+
+  @IsOptional()
+  @IsBoolean()
+  showPhoto: boolean = true;
 }
 
 @ApiTags('Resume')

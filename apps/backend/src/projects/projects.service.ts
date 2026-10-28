@@ -8,7 +8,7 @@ import type { Prisma } from '@prisma/client';
 export class ProjectsService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(publishedOnly = false) {
+  async findAll(publishedOnly = true) {
     const where: Prisma.ProjectWhereInput = publishedOnly
       ? { status: 'published' }
       : {};
@@ -18,9 +18,11 @@ export class ProjectsService {
     });
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, publishedOnly = false) {
     const project = await this.prisma.project.findUnique({ where: { id } });
-    if (!project) throw new NotFoundException('Project not found');
+    if (!project || (publishedOnly && project.status !== 'published')) {
+      throw new NotFoundException('Project not found');
+    }
     return project;
   }
 

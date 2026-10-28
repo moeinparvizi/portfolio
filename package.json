@@ -9,6 +9,12 @@
     "test": "pnpm --parallel -r run test",
     "db:migrate": "pnpm --filter backend run db:migrate",
     "db:seed": "pnpm --filter backend run db:seed",
-    "db:studio": "pnpm --filter backend run db:studio"
-  }
+    "db:studio": "pnpm --filter backend run db:studio",
+    "db:deploy": "pnpm --filter backend exec prisma migrate deploy",
+    "db:seed:production": "node scripts/seed-production.mjs"
+  },
+  "engines": {
+    "node": "24.x"
+  },
+  "packageManager": "pnpm@11.10.0"
 }

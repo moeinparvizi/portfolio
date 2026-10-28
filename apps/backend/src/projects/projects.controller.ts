@@ -1,7 +1,7 @@
 import {
-  Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards,
+  Controller, Get, Post, Put, Delete, Body, Param, UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -15,13 +15,16 @@ export class ProjectsController {
 
   @Get()
   @Public()
-  @ApiOperation({ summary: 'Get all projects' })
-  findAll(@Query('all') all?: string, @Query('published') published?: string) {
-    // Return all projects by default (admin needs to see drafts too)
-    // Use ?published=true to get only published projects
-    if (published === 'true') {
-      return this.projectsService.findAll(true);
-    }
+  @ApiOperation({ summary: 'Get published projects' })
+  findAll() {
+    return this.projectsService.findAll(true);
+  }
+
+  @Get('admin/all')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all projects including drafts (admin)' })
+  findAllForAdmin() {
     return this.projectsService.findAll(false);
   }
 
@@ -36,7 +39,7 @@ export class ProjectsController {
   @Public()
   @ApiOperation({ summary: 'Get project by ID' })
   findOne(@Param('id') id: string) {
-    return this.projectsService.findOne(id);
+    return this.projectsService.findOne(id, true);
   }
 
   @Post()

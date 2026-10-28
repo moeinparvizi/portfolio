@@ -1,6 +1,7 @@
 import { Injectable, signal, effect, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import type { Locale } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -13,6 +14,12 @@ export class LocaleService {
   direction = signal<'ltr' | 'rtl'>(this.locale() === 'fa' ? 'rtl' : 'ltr');
 
   constructor(private router: Router) {
+    this.router.events.pipe(takeUntilDestroyed()).subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        const locale = event.urlAfterRedirects.split(/[/?#]/).filter(Boolean)[0] as Locale;
+        if (this.SUPPORTED.includes(locale)) this.locale.set(locale);
+      }
+    });
     if (isPlatformBrowser(this.platformId)) {
       effect(() => {
         const current = this.locale();
@@ -51,6 +58,9 @@ export class LocaleService {
 
   private getInitialLocale(): Locale {
     if (isPlatformBrowser(this.platformId)) {
+      const fromUrl = window.location.pathname.split('/').filter(Boolean)[0] as Locale;
+      if (this.SUPPORTED.includes(fromUrl)) return fromUrl;
+
       const stored = localStorage.getItem(this.STORAGE_KEY) as Locale | null;
       if (stored && this.SUPPORTED.includes(stored)) return stored;
 

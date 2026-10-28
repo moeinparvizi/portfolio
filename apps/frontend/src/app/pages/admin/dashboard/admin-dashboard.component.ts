@@ -370,7 +370,7 @@ export class AdminDashboardComponent implements OnInit {
       this.stats.skills = s.length;
       this.cdr.detectChanges();
     });
-    this.api.getProjects().subscribe(p => {
+    this.api.getAdminProjects().subscribe(p => {
       this.stats.projects = p.length;
       this.cdr.detectChanges();
     });

@@ -1,0 +1,10 @@
+.env*
+**/.env*
+node_modules
+**/node_modules
+**/dist
+**/.angular
+**/coverage
+**/*.spec.ts
+**/e2e
+*.log

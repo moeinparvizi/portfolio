@@ -1,6 +1,6 @@
+import fonts from './assets/fonts.json';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import * as puppeteer from 'puppeteer';
 
 interface ResumeOptions {
   locale: 'fa' | 'en' | 'de';
@@ -10,6 +10,14 @@ interface ResumeOptions {
 @Injectable()
 export class ResumeService {
   constructor(private prisma: PrismaService) {}
+
+  protected async loadBrowserDependencies() {
+    const [puppeteer, { default: chromium }] = await Promise.all([
+      import('puppeteer'),
+      import('@sparticuz/chromium'),
+    ]);
+    return { puppeteer, chromium };
+  }
 
   async generatePdf(options: ResumeOptions): Promise<Buffer> {
     const { locale, showPhoto } = options;
@@ -32,25 +40,33 @@ export class ResumeService {
 
     const html = this.buildHtml(profile, skills, projects, experience, education, t, showPhoto, locale);
 
-    const browser = await puppeteer.launch({
+    const { puppeteer, chromium } = await this.loadBrowserDependencies();
+    const browser = await puppeteer.launch(process.env.VERCEL ? {
+      headless: 'shell',
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+    } : {
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
 
-    const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'domcontentloaded' });
+    try {
+      const page = await browser.newPage();
+      await page.setContent(html, { waitUntil: 'domcontentloaded' });
 
     // Wait for fonts
-    await page.evaluateHandle('document.fonts.ready');
+      await page.evaluateHandle('document.fonts.ready');
 
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: { top: '0', right: '0', bottom: '0', left: '0' },
-    });
+      const pdfBuffer = await page.pdf({
+        format: 'A4',
+        printBackground: true,
+        margin: { top: '0', right: '0', bottom: '0', left: '0' },
+      });
 
-    await browser.close();
-    return Buffer.from(pdfBuffer);
+      return Buffer.from(pdfBuffer);
+    } finally {
+      await browser.close();
+    }
   }
 
   private buildHtml(
@@ -75,7 +91,8 @@ export class ResumeService {
 <head>
   <meta charset="UTF-8">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Vazirmatn:wght@300;400;500;600;700&display=swap');
+    @font-face { font-family: 'Vazirmatn'; font-weight: 100 500; src: url(data:font/ttf;base64,${fonts.Regular}) format('truetype'); }
+    @font-face { font-family: 'Vazirmatn'; font-weight: 600 900; src: url(data:font/ttf;base64,${fonts.Bold}) format('truetype'); }
     
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {

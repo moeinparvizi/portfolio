@@ -1,0 +1,45 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "frontend": {
+      "root": "apps/frontend",
+      "framework": "angular",
+      "buildCommand": "pnpm run build --output-mode=static && cp dist/frontend/browser/index.csr.html dist/frontend/browser/index.html",
+      "outputDirectory": "dist/frontend/browser",
+      "rewrites": [
+        {
+          "source": "/(.*)",
+          "destination": "/index.html"
+        }
+      ],
+      "installCommand": "PUPPETEER_SKIP_DOWNLOAD=true pnpm install --frozen-lockfile --virtual-store-dir=\"$PWD/../backend/node_modules/.pnpm\""
+    },
+    "backend": {
+      "root": ".",
+      "framework": "nestjs",
+      "entrypoint": "apps/backend/vercel-entry.cjs",
+      "buildCommand": "pnpm --dir apps/backend exec prisma generate && pnpm --dir apps/backend run build",
+      "installCommand": "PUPPETEER_SKIP_DOWNLOAD=true pnpm install --frozen-lockfile --virtual-store-dir=\"$PWD/apps/backend/node_modules/.pnpm\""
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/health",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/(.*)",
+      "destination": {
+        "service": "frontend"
+      }
+    }
+  ]
+}

@@ -205,7 +205,7 @@ export class AdminProjectsComponent implements OnInit {
   ngOnInit() { this.load(); }
 
   load() {
-    this.api.getProjects().subscribe({
+    this.api.getAdminProjects().subscribe({
       next: (p) => { this.projects = []; this.cdr.detectChanges(); this.projects = p; this.cdr.detectChanges(); },
       error: () => this.toast.error('Failed to load projects'),
     });

@@ -47,6 +47,10 @@ export class ApiService {
     return this.http.get<Project[]>(`${this.base}/projects`);
   }
 
+  getAdminProjects(): Observable<Project[]> {
+    return this.http.get<Project[]>(`${this.base}/projects/admin/all`);
+  }
+
   getFeaturedProjects(): Observable<Project[]> {
     return this.http.get<Project[]>(`${this.base}/projects/featured`);
   }
